@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>com.github.maximovj</groupId>
+        <artifactId>rhhub</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    
+    <artifactId>frontend</artifactId>
+    <name>rhhub-frontend</name>
+    <packaging>pom</packaging>
+    
+    <properties>
+        <!-- 🔧 VERSIONES CORRECTAMENTE CERRADAS -->
+        <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>  <!-- ✅ CERRADO BIEN -->
+        <antrun-maven-plugin.version>3.1.0</antrun-maven-plugin.version>
+    </properties>
+    
+    <build>
+        <plugins>
+            <!-- 1. Plugin para detectar Node.js -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>detect-node</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmd</executable>
+                            <arguments>
+                                <argument>/c</argument>
+                                <argument>echo 📦 Node.js: &amp;&amp; node --version</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- 2. Mensaje informativo -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${antrun-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>welcome-message</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo>=========================================</echo>
+                                <echo>   🚀 CONSTRUYENDO FRONTEND (VUE 3)   </echo>
+                                <echo>=========================================</echo>
+                                <echo>✅ Node.js detectado en el sistema</echo>
+                                <echo>✅ Usando instalación local</echo>
+                                <echo>✅ Saltando descarga automática</echo>
+                                <echo>=========================================</echo>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- 3. Plugin frontend (usa Node.js local) -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+                <configuration>
+                    <skip>true</skip> <!-- No descargar Node.js -->
+                    <workingDirectory>./</workingDirectory>
+                </configuration>
+                <executions>
+                    <!-- Solo npm install -->
+                    <execution>
+                        <id>npm-install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    
+                    <!-- npm run build -->
+                    <execution>
+                        <id>npm-build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
