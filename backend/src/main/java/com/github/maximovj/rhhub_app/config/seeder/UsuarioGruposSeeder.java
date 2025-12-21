@@ -39,7 +39,7 @@ public class UsuarioGruposSeeder implements ApplicationRunner {
             // Crear grupo para administradores
             UsuarioGruposEntity grupo = UsuarioGruposEntity.builder()
             .nombre("ADMINISTRADOR")
-            .descripcion("GRUPOS CON TODOS LOS PERMISOS")
+            .descripcion("GRUPO CON TODOS LOS PERMISOS")
             .esActivo(true)
             .rol(null)
             .permisos(todosPermisos)
