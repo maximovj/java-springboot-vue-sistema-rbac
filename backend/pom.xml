@@ -5,6 +5,14 @@
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <spring-restdocs.version>3.0.0</spring-restdocs.version>
+        <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
+    </properties>
     
     <!-- Parent es el POM raíz -->
     <parent>
@@ -128,12 +136,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- Spring Boot JAR -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
