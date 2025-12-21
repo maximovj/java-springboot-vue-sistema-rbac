@@ -9,10 +9,13 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.github.maximovj.rhhub_app.config.properties.SeederProperties;
 import com.github.maximovj.rhhub_app.entity.UsuarioPermisoEstadoEntity;
 import com.github.maximovj.rhhub_app.entity.UsuarioPermisosEntity;
 import com.github.maximovj.rhhub_app.repository.UsuarioPermisoEstadoRepository;
 import com.github.maximovj.rhhub_app.repository.UsuarioPermisosRepository;
+
+import jakarta.transaction.Transactional;
 
 @Profile("seeder")
 @Component
@@ -25,9 +28,15 @@ public class UsuarioPermisosSeeder implements ApplicationRunner {
     @Autowired
     UsuarioPermisoEstadoRepository usuarioPermisoEstadoRepository;
 
+    @Autowired
+    SeederProperties seederProperties;
+
 	@Override
+    @Transactional
 	public void run(ApplicationArguments args) throws Exception {
 		
+        if(this.seederProperties.isEnabled() == false) return;
+
         if(!repository.existsByPermisoAccion("CRUD_USUARIOS")) {
 
             Optional<UsuarioPermisoEstadoEntity> estado = usuarioPermisoEstadoRepository.findByEstado("ACTIVO");

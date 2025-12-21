@@ -9,6 +9,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.github.maximovj.rhhub_app.config.properties.SeederProperties;
 import com.github.maximovj.rhhub_app.entity.UsuarioEstadoEntity;
 import com.github.maximovj.rhhub_app.repository.UsuarioEstadoRepository;
 
@@ -24,8 +25,12 @@ public class UsuarioEstadoSeeder implements ApplicationRunner {
 
     private final UsuarioEstadoRepository repository;
 
+    private final SeederProperties seederProperties;
+
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
+
+        if(seederProperties.isEnabled() == false) return;
 
         log.info("Ejecutando seeder de: UsuarioEstadoSeeder");
 
