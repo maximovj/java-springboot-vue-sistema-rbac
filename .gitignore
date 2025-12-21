@@ -72,3 +72,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### PRODUCCION ###
+.env
+.env.prod
+.env.dev
+.env.seeder
