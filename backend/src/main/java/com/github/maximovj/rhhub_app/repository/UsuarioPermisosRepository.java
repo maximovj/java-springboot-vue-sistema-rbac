@@ -12,4 +12,8 @@ public interface UsuarioPermisosRepository extends JpaRepository<UsuarioPermisos
 
     boolean existsByPermisoAccion(String permisoAccion);
 
+    Optional<UsuarioPermisosEntity> findByPermisoAccion(String permisoAccion);
+
+    List<UsuarioPermisosEntity> findByPermisoModulo(String permisoModulo);
+
 }

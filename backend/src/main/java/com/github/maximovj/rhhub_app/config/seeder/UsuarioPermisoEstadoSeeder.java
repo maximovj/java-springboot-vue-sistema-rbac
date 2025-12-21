@@ -20,21 +20,31 @@ public class UsuarioPermisoEstadoSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
 
         if(!repository.existsByEstado("ACTIVO")) {
-            repository.save(
-                UsuarioPermisoEstadoEntity
+
+            UsuarioPermisoEstadoEntity entidad = UsuarioPermisoEstadoEntity
                 .builder()
                 .estado("ACTIVO")
                 .descripcion("PERMISO ACTIVO")
-                .build());
+                .build();
+
+            if(entidad != null) {
+                repository.save(entidad);
+                System.out.println("usuario permiso estado ACTIVO fue creado correctamente.");
+            }
+                
         }
 
         if(!repository.existsByEstado("DESACTIVADO")) {
-            repository.save(
-                UsuarioPermisoEstadoEntity
+            UsuarioPermisoEstadoEntity entidad = UsuarioPermisoEstadoEntity
                 .builder()
                 .estado("DESACTIVADO")
                 .descripcion("PERMISO DESACTIVADO")
-                .build());
+                .build();
+            
+            if(entidad != null) {
+                repository.save(entidad);
+                System.out.println("usuario permiso estado DESACTIVADO fue creado correctamente.");
+            }
         }
 
     }
