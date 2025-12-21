@@ -35,11 +35,5 @@ public class UsuarioEstadoEntity {
     @Column(name = "DESCRIPCION", nullable = false, unique = true)
     @JsonProperty("descripcion")
     private String descripcion;
-
-    // !! RELACIONES
-    
-    // Un estado pertenece a un usuario
-    @OneToOne(mappedBy = "estado")
-    private UsuarioEntity usuarioEstado;
     
 }

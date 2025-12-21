@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -61,17 +63,13 @@ public class UsuarioEntity {
     // !! RELACIONES
 
     // Un usuario tiene un rol
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROL_ID", referencedColumnName = "ROL_ID")
-    // --
-    @JsonProperty("rol")
     private UsuarioRolEntity rol;
 
     // Un usuario tiene un estado
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USUARIO_ESTADO_ID", referencedColumnName = "USUARIO_ESTADO_ID")
-    // --
-    @JsonProperty("estado")
     private UsuarioEstadoEntity estado;
 
 }

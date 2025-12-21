@@ -37,9 +37,5 @@ public class UsuarioPermisoEstadoEntity {
     private String descripcion;
 
     // !! RELACIONES
-
-    // Un estado pertenece a un permiso
-    @OneToOne(mappedBy = "estado")
-    private UsuarioPermisosEntity permiso;
     
 }
