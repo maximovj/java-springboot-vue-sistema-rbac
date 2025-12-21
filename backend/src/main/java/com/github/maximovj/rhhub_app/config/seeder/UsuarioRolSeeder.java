@@ -1,0 +1,77 @@
+package com.github.maximovj.rhhub_app.config.seeder;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.UsuarioPermisosEntity;
+import com.github.maximovj.rhhub_app.entity.UsuarioRolEntity;
+import com.github.maximovj.rhhub_app.repository.UsuarioGruposRepository;
+import com.github.maximovj.rhhub_app.repository.UsuarioPermisosRepository;
+import com.github.maximovj.rhhub_app.repository.UsuarioRolRepository;
+
+import jakarta.transaction.Transactional;
+
+@Component
+@Order(5)
+public class UsuarioRolSeeder implements ApplicationRunner {
+
+    @Autowired
+    UsuarioRolRepository rolRepository;
+
+    @Autowired
+    UsuarioPermisosRepository permisosRepository;
+
+    @Autowired
+    UsuarioGruposRepository gruposRepository;
+
+    @Override
+    @Transactional
+    public void run(ApplicationArguments args) throws Exception {
+        if(!rolRepository.existsByRolNombre("ADMIN")) {
+            crearRolUsuarioAdministrador();
+        }
+
+    }
+
+    private void crearRolUsuarioAdministrador() {
+        Optional<UsuarioGruposEntity> grupo = gruposRepository.findByNombre("ADMINISTRADOR");
+
+        if(!grupo.isPresent())  return;
+        UsuarioGruposEntity grupoAdmin = grupo.get();
+        
+        // Crear el rol ADMIN
+        UsuarioRolEntity rolAdmin = UsuarioRolEntity.builder()
+            .rolNombre("ADMIN")
+            .rolDescripcion("Rol de administrador del sistema")
+            .rolEsAdministrador(true)
+            .esActivo(true)
+            .build();
+
+        if(rolAdmin != null) {
+
+            // Asociar grupo al rol (depende de tu modelo de datos)
+            // Si Rol tiene relación con Grupos:
+            rolAdmin.addGrupo(grupoAdmin);
+
+            // O si Grupo tiene relación con Rol:
+            //grupoAdmin.setRol(rolAdmin);
+            
+            // Guardar (el orden depende de tus cascades)
+            //gruposRepository.save(grupoAdmin);
+            rolRepository.save(rolAdmin);
+
+            int numPermisos = grupoAdmin.getPermisos().size();
+            System.out.println("Rol ADMIN y grupo ADMINISTRADORES creados con " + numPermisos + " permisos");
+        }
+    }
+    
+}

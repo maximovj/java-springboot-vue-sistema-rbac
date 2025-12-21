@@ -28,27 +28,43 @@ public class UsuarioEstadoSeeder implements ApplicationRunner {
         log.info("Ejecutando seeder de: UsuarioEstadoSeeder");
 
         if(this.repository.existsByEstado("CREADA") == false) {
-            this.repository.save(UsuarioEstadoEntity
+
+            UsuarioEstadoEntity estado = UsuarioEstadoEntity
                 .builder()
                 .estado("CREADA")
                 .descripcion("CUENTA CREADA")
-                .build());
+                .build();
+
+            if(estado != null) {
+                this.repository.save(estado);
+                System.out.println("estado de usuario CREADA fue creado correctamente.");
+            }
         }
 
         if(this.repository.existsByEstado("ELIMINADA") == false) {
-            this.repository.save(UsuarioEstadoEntity
+            UsuarioEstadoEntity estado = UsuarioEstadoEntity
                 .builder()
                 .estado("ELIMINADA")
                 .descripcion("CUENTA ELIMINADA")
-                .build());
+                .build();
+
+            if(estado != null) {
+                this.repository.save(estado);
+                System.out.println("estado de usuario ELIMINADA fue creado correctamente.");
+            }
         }
 
         if(this.repository.existsByEstado("VERIFICADA") == false) {
-            this.repository.save(UsuarioEstadoEntity
+            UsuarioEstadoEntity estado = UsuarioEstadoEntity
                 .builder()
                 .estado("VERIFICADA")
                 .descripcion("CUENTA VERIFICADA")
-                .build());
+                .build();
+
+            if(estado != null) {
+                this.repository.save(estado);
+                System.out.println("estado de usuario VERIFICADA fue creado correctamente.");
+            }
         }
 
 	}

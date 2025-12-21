@@ -32,13 +32,19 @@ public class UsuarioPermisosSeeder implements ApplicationRunner {
             Optional<UsuarioPermisoEstadoEntity> estado = usuarioPermisoEstadoRepository.findByEstado("ACTIVO");
             if(estado.isPresent()) {
                 UsuarioPermisoEstadoEntity estado_activo = estado.get();
-                repository.save(
-                    UsuarioPermisosEntity.builder()
-                    .permisoAccion("CRUD_USUARIOS")
-                    .esPermitido(true)
-                    .estado(estado_activo)
-                    .build()
-                );
+                
+                // Crear el objeto de manera más explícita
+                UsuarioPermisosEntity permiso = UsuarioPermisosEntity.builder()
+                .permisoAccion("CRUD_USUARIOS")  // Esto es un literal, no es null
+                .permisoModulo("MODULO_USUARIOS")
+                .esPermitido(true)
+                .estado(estado_activo)
+                .build();
+
+                if(permiso != null) {
+                    repository.save(permiso);
+                    System.out.println("permiso CRUD_USUARIOS fue creado correctamente.");
+                }
             }
         }
 
