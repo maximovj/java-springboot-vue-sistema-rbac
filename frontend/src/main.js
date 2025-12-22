@@ -7,11 +7,9 @@ import router from './router'
 //import PrimeVuePlugin from '@plugins/primevue'
 import PrimeVue from "primevue/config";
 import SportYellowPreset from './themes/SportYellowTheme'
-import '@styles/main.css';              // estilos globales
-//import '@styles/theme-light.css';     // variables light
-//import '@styles/theme-dark.css';      // variables dark
-import '@styles/primevue-theme.css';    // variables dark
-import '@styles/gradients.css';         // degradados para botones/cards
+import '@styles/main.css'
+import '@styles/theme-primevue.css'
+import '@styles/gradients.css'
 
 import CommonPlugin from './plugins/common'
 
@@ -27,7 +25,7 @@ app.use(PrimeVue, {
     preset: SportYellowPreset,
     options: {
       prefix: 'p',
-      darkModeSelector: 'none', // O 'system' si quieres que cambie automáticamente
+      darkModeSelector: '.dark',
       cssLayer: false
     }
   }

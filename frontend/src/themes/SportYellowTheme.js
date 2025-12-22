@@ -50,7 +50,10 @@ export default definePreset(Aura, {
         text: {
           color: '#FFFFFF',
           'muted-color': '#A0A0A0'
-        }
+        },
+        border: {
+          color: '#c01717ff'
+        },
       }
     }
   }

@@ -34,7 +34,20 @@
 /* ===============================
    PALETA DARK MODE
 =============================== */
-body.dark {
+
+
+/* Para sistema - media query */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --p-primary-500: #F4C430;
+    --p-surface-0: #1a1a1a;
+    --p-text-color: #FFFFFF;
+    /* ... resto de variables */
+  }
+}
+
+/* Para clase .dark manual */
+.dark {
   --p-surface-0: #1a1a1a;
   --p-surface-50: #2a2a2a;
   --p-surface-100: #3a3a3a;
