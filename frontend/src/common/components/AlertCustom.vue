@@ -1,9 +1,9 @@
 <template>
-  <div v-if="visible" class="custom-modal">
+  <div v-if="visible" class="custom-modal" :class="{ dark: isDark }">
     <div class="custom-modal__panel">
 
       <!-- HEADER -->
-      <div class="custom-modal__header" :style="{ background: headerColor }">
+      <div class="custom-modal__header">
         <h5 class="custom-modal__title">{{ title }}</h5>
         <button class="custom-modal__close" @click="cancel()">×</button>
       </div>
@@ -25,44 +25,39 @@
       <!-- FOOTER -->
       <div class="custom-modal__footer">
         <!-- ALERT -->
-        <button v-if="isAlert" class="btn-ok" @click="resolve(true)">ACEPTAR</button>
+        <button v-if="isAlert" class="btn-ok p-ripple" @click="resolve(true)">ACEPTAR</button>
 
         <!-- CONFIRM: sí / no / cancelar -->
         <template v-if="isConfirm">
-          
-          <!-- Cancelar -->
           <button 
             v-if="confirmButtons.visible.cancel"
-            class="btn-outline" 
+            class="btn-outline p-ripple" 
             @click="resolve('cancel')"
           >
             {{ confirmButtons.cancel }}
           </button>
 
-          <!-- No -->
           <button 
             v-if="confirmButtons.visible.no"
-            class="btn-outline" 
+            class="btn-outline p-ripple" 
             @click="resolve('no')"
           >
             {{ confirmButtons.no }}
           </button>
 
-          <!-- Sí -->
           <button 
             v-if="confirmButtons.visible.yes"
-            class="btn-ok" 
+            class="btn-ok p-ripple" 
             @click="resolve('yes')"
           >
             {{ confirmButtons.yes }}
           </button>
-
         </template>
 
         <!-- PROMPT -->
         <template v-if="isPrompt">
-          <button class="btn-outline" @click="resolve(null)">CANCELAR</button>
-          <button class="btn-ok" @click="resolve(promptValue)">ACEPTAR</button>
+          <button class="btn-outline p-ripple" @click="resolve(null)">CANCELAR</button>
+          <button class="btn-ok p-ripple" @click="resolve(promptValue)">ACEPTAR</button>
         </template>
       </div>
 
@@ -77,7 +72,7 @@ export default {
       visible: false,
       title: "",
       message: "",
-      headerColor: "#91278F",
+      isDark: false,
       resolver: null,
       
       // Control de tipo
@@ -103,7 +98,7 @@ export default {
       this.visible = true;
       this.title = config.title || "";
       this.message = config.message || "";
-      this.headerColor = config.headerColor || "#91278F"; // #0096ad
+      this.isDark = config.dark || false;
 
       return new Promise(resolve => {
         this.resolver = resolve;
@@ -111,34 +106,25 @@ export default {
     },
 
     // === ALERT ===
-    alert({ title = "Alerta", message, headerColor }) {
+    alert({ title = "Alerta", message, dark = false }) {
       this.isAlert = true;
       this.isConfirm = false;
       this.isPrompt = false;
-      return this.openBase({ title, message, headerColor });
+      return this.openBase({ title, message, dark });
     },
 
-    // === CONFIRM (con 3 botones y textos personalizados) ===
-    confirm({
-      title = "Confirmación",
-      message,
-      headerColor,
-      buttons = {}
-    }) {
+    // === CONFIRM ===
+    confirm({ title = "Confirmación", message, dark = false, buttons = {} }) {
       this.isAlert = false;
       this.isConfirm = true;
       this.isPrompt = false;
 
-      // Visibilidad de botones
-    const visibles = buttons.visible || ["yes", "no", "cancel"];
+      const visibles = buttons.visible || ["yes", "no", "cancel"];
 
-      // mezclar textos personalizados
       this.confirmButtons = {
         yes: buttons.yes || "SI",
         no: buttons.no || "NO",
         cancel: buttons.cancel || "CANCELAR",
-
-        // Mostrar botones
         visible: {
           yes: visibles.includes("yes"),
           no: visibles.includes("no"),
@@ -146,16 +132,11 @@ export default {
         }
       };
 
-      return this.openBase({ title, message, headerColor });
+      return this.openBase({ title, message, dark });
     },
 
     // === PROMPT ===
-    prompt({ 
-      title = "INGRESAR VALOR", 
-      message, 
-      placeholder = "", 
-      headerColor 
-    }) {
+    prompt({ title = "INGRESAR VALOR", message, placeholder = "", dark = false }) {
       this.isAlert = false;
       this.isConfirm = false;
       this.isPrompt = true;
@@ -163,7 +144,7 @@ export default {
       this.promptValue = "";
       this.promptPlaceholder = placeholder;
 
-      return this.openBase({ title, message, headerColor });
+      return this.openBase({ title, message, dark });
     },
 
     // === CLOSE ===
@@ -176,16 +157,18 @@ export default {
     },
 
     cancel() {
-      // Cancelar según tipo:
       if (this.isConfirm) this.resolve(false);
       else if (this.isPrompt) this.resolve(null);
-      else this.resolve(true); // alert only
+      else this.resolve(true);
     }
   }
 };
 </script>
 
 <style scoped>
+/* ===============================
+   MODAL BASE
+=============================== */
 .custom-modal {
   position: fixed;
   inset: 0;
@@ -195,9 +178,13 @@ export default {
   z-index: 10000;
 }
 
+.custom-modal.dark {
+  background: rgba(0, 0, 0, 0.65);
+}
+
 .custom-modal__panel {
-  width: min(380px, 90vw);
-  background: #fff;
+  width: min(400px, 90vw);
+  background: var(--p-surface-0);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   overflow: hidden;
@@ -209,16 +196,21 @@ export default {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* ===============================
+   HEADER
+=============================== */
 .custom-modal__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  color: #fff;
+  padding: 12px 16px;
+  color: #111;
+  background: linear-gradient(135deg, var(--p-primary-400), var(--p-primary-600));
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.1);
 }
 
 .custom-modal__title {
-  font-weight: 400;
+  font-weight: 600;
   font-size: 1rem;
   margin: 0;
 }
@@ -226,15 +218,18 @@ export default {
 .custom-modal__close {
   border: none;
   background: transparent;
-  color: #fff;
+  color: #111;
   font-size: 26px;
   cursor: pointer;
   line-height: 1;
 }
 
+/* ===============================
+   BODY
+=============================== */
 .custom-modal-body {
-  padding: 14px 16px;
-  color: #4a4a59;
+  padding: 16px;
+  color: var(--p-text-color);
   text-align: center;
 }
 
@@ -245,6 +240,18 @@ export default {
   white-space: pre-line;
 }
 
+.prompt-input {
+  width: 90%;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--p-border-color);
+  font-size: 0.9rem;
+}
+
+/* ===============================
+   FOOTER / BUTTONS
+=============================== */
 .custom-modal__footer {
   padding: 12px;
   display: flex;
@@ -253,32 +260,32 @@ export default {
 }
 
 .btn-ok {
-  background: #941c80;
-  color: #fff;
+  background: linear-gradient(135deg, var(--p-primary-400), var(--p-primary-600));
+  color: #111;
   border: none;
   border-radius: 8px;
   padding: 10px 18px;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-outline {
-  background: #fff;
-  color: #941c80;
-  border: 1px solid #941c80;
+  background: var(--p-surface-0);
+  color: var(--p-primary-500);
+  border: 1px solid var(--p-primary-500);
   border-radius: 8px;
   padding: 10px 18px;
   font-weight: 700;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
-.prompt-input {
-  width: 90%;
-  margin-top: 10px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #bbb;
-  font-size: 0.9rem;
+/* Ripple adjustment */
+.btn-ok .p-ink,
+.btn-outline .p-ink {
+  z-index: 2;
 }
 </style>
