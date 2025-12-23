@@ -8,22 +8,24 @@ const router = createRouter({
       path: '/acceder',
       name: 'acceder',
       component: () => import('@/views/AccederView.vue'),
-      meta: { title: 'Iniciar sesión' }
     },
     {
       path: '/panel',
       name: 'panel',
-      component: () => import('@/views/PanelView.vue')
+      component: () => import('@/views/PanelView.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/usuarios',
       name: 'usuarios',
-      component: () => import('@/views/UsuariosView.vue')
+      component: () => import('@/views/UsuariosView.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/configuracion',
       name: 'configuracion',
-      component: () => import('@/views/ConfiguracionView.vue')
+      component: () => import('@/views/ConfiguracionView.vue'),
+      meta: { requiresAuth: true }
     },
     { path: '/:pathMatch(.*)*', redirect: '/acceder'},
   ],
