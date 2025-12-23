@@ -32,7 +32,7 @@ export async function apiExecutar({
     });
 
     if (showSuccess) {
-      window.$alert.alert({
+      await window.$alert.alert({
         title: "Aviso",
         message: successMessage || "Operación realizada correctamente",
       });
@@ -43,7 +43,7 @@ export async function apiExecutar({
   } catch (error) {
 
     if (showError) {
-      window.$alert.alert({
+      await window.$alert.alert({
         title: "Error",
         message: errorMessage || error.message,
       });
@@ -76,11 +76,11 @@ export function apiExecutarV1({
   catchFn,
   finallyFn,
 } = {}) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
+  return new Promise( (resolve, reject) => {
+    setTimeout( async () => {
       try {
         if (alertFetch.showSuccess) {
-          window.$alert.alert({
+          await window.$alert.alert({
             title: alertFetch.titleSuccess,
             message: alertFetch.messageSuccess
           });
@@ -94,7 +94,7 @@ export function apiExecutarV1({
       } catch (error) {
 
         if (alertFetch.showError) {
-          window.$alert.alert({
+          await window.$alert.alert({
             title: alertFetch.titleError,
             message: alertFetch.messageError
           });
@@ -130,11 +130,11 @@ export function apiExecutarV2({
 
   return new Promise((resolve, reject) => {
 
-    setTimeout(() => {
+    setTimeout( async () => {
       try {
 
         if (showSuccess) {
-          window.$alert.alert({
+          await window.$alert.alert({
             title: "Aviso",
             message: successMessage
           });
@@ -147,7 +147,7 @@ export function apiExecutarV2({
 
       } catch (error) {
 
-        window.$alert.alert({
+        await window.$alert.alert({
           title: "Error",
           message: errorMessage
         });
@@ -181,7 +181,7 @@ export async function apiExecutarV3({
     await new Promise(r => setTimeout(r, 4500));
 
     if (showSuccess) {
-      window.$alert.alert({
+      await window.$alert.alert({
         title: "Aviso",
         message: successMessage
       });
@@ -191,7 +191,7 @@ export async function apiExecutarV3({
 
   } catch (error) {
 
-    window.$alert.alert({
+    await window.$alert.alert({
       title: "Error",
       message: errorMessage
     });
