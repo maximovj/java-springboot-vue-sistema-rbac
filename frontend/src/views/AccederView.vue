@@ -1,6 +1,5 @@
 <template>
-  <div class="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-    <div class="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+  <PlantillaBaseCentrada max-width="max-w-xl lg:max-w-md">
       <!-- Formulario -->
       <form @submit.prevent="login" class="space-y-4">
         
@@ -54,8 +53,7 @@
         ¿No tienes cuenta?
         <a href="#" class="text-blue-500 hover:underline">Regístrate aquí</a>
       </p>
-    </div>
-  </div>
+  </PlantillaBaseCentrada>
 </template>
 
 <script>

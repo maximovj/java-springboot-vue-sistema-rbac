@@ -34,6 +34,7 @@ declare module 'vue' {
     Message: typeof import('primevue/message')['default']
     Password: typeof import('primevue/password')['default']
     PlantillaBase: typeof import('./src/components/PlantillaBase.vue')['default']
+    PlantillaBaseCentrada: typeof import('./src/components/PlantillaBaseCentrada.vue')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
