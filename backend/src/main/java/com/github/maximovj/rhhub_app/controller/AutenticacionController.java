@@ -49,27 +49,32 @@ public class AutenticacionController {
 
     // Login
     @PostMapping("/login")
-    public ResponseEntity<LoginOutDto> login(@RequestBody LoginInDto request) {
+    public ResponseEntity<LoginOutDto> login(@RequestBody LoginInDto request, HttpServletResponse response) {
         gestorAutenticacion.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsuario(), request.getContrasena()
-                )
+                new UsernamePasswordAuthenticationToken(request.getUsuario(), request.getContrasena())
         );
 
         UserDetails userDetails = servicioDetallesUsuario.loadUserByUsername(request.getUsuario());
         String accessToken = servicioJwt.generarToken(userDetails.getUsername());
 
-        // Crear refresh token en BD
         UsuarioEntity usuario = usuarioRepository.findByUsuario(request.getUsuario()).get();
         RenovarTokensEntity refreshToken = renovarTokensService.createRefreshToken(usuario);
 
-        return ResponseEntity.ok(new LoginOutDto(accessToken, refreshToken.getToken()));
+        // Guardar refresh token en HttpOnly cookie
+        Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/api/v1/autenticacion"); // limitar ruta
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 días
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(new LoginOutDto(accessToken, null));
     }
+
 
     // Refresh token
     @PostMapping("/refresh")
-    public ResponseEntity<LoginOutDto> refresh(@RequestBody String renovar_token) {
-        RenovarTokensEntity refreshToken = renovarTokensRepository.findByToken(renovar_token)
+    public ResponseEntity<LoginOutDto> refresh(@CookieValue("refreshToken") String refreshTokenValue) {
+        RenovarTokensEntity refreshToken = renovarTokensRepository.findByToken(refreshTokenValue)
                 .orElseThrow(() -> new RuntimeException("Refresh token inválido"));
 
         if (!renovarTokensService.isValid(refreshToken)) {
@@ -77,8 +82,9 @@ public class AutenticacionController {
         }
 
         String accessToken = servicioJwt.generarToken(refreshToken.getUsuario().getUsuario());
-        return ResponseEntity.ok(new LoginOutDto(accessToken, refreshToken.getToken()));
+        return ResponseEntity.ok(new LoginOutDto(accessToken, null));
     }
+
 
     @PostMapping("/validate")
     public ResponseEntity<Boolean> validarToken(@RequestHeader("Authorization") String authHeader) {
