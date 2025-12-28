@@ -78,3 +78,6 @@ build/
 .env.prod
 .env.dev
 .env.seeder
+
+### ISSUE ###
+*issue*.md
