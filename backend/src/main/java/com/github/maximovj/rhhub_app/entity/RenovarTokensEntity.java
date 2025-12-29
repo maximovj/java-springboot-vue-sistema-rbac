@@ -17,12 +17,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Table(name = "RENOVAR_TOKENS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "RENOVAR_TOKENS")
 public class RenovarTokensEntity {
 
     @Id
@@ -37,10 +37,22 @@ public class RenovarTokensEntity {
     private Instant fechaDeExpiracion;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "USUARIO_ID", nullable = false)
     private UsuarioEntity usuario;
 
-    @Column(name = "ES_SUSPENDIDO", nullable = false)
+    @Column(name = "RECUERDAME", nullable = false)
+    @Builder.Default
+    private boolean recuerdame = false;
+
+    public boolean esRecuerdame(){
+        return this.suspendido;
+    }
+    
+    public void recuerdame(boolean esSuspendido) {
+        this.suspendido = esSuspendido;
+    }
+
+    @Column(name = "SUSPENDIDO", nullable = false)
     @Builder.Default
     private boolean suspendido = false;
 
