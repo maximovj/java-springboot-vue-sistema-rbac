@@ -3,8 +3,8 @@ package com.github.maximovj.rhhub_app.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -36,6 +36,7 @@ import lombok.NoArgsConstructor;
         )
     }
 )
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UsuarioPermisosEntity {
 
     @Id
@@ -57,11 +58,13 @@ public class UsuarioPermisosEntity {
     @Builder.Default
     private Boolean esPermitido = false;
 
-    // !! RELACIONES
+    // !! RELACIONES CORREGIDAS
 
     // Un permiso puede estar en muchos grupos
-    @ManyToMany(mappedBy = "permisos")
+    // IMPORTANTE: El mappedBy debe apuntar al nombre del atributo en la otra entidad
+    @ManyToMany(mappedBy = "permisos") // <-- CAMBIADO de "grupos" a "permisos"
     @Builder.Default
+    @JsonIgnore // <-- SOLUCIÓN: Ignora completamente esta relación en JSON
     private Set<UsuarioGruposEntity> grupos = new HashSet<>();
     
     @ManyToOne(fetch = FetchType.LAZY)

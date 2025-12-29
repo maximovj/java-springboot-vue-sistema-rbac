@@ -3,6 +3,7 @@ package com.github.maximovj.rhhub_app.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,7 @@ import lombok.NoArgsConstructor;
         @UniqueConstraint(columnNames = {"NOMBRE", "DESCRIPCION"})
     }
 )
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UsuarioGruposEntity {
 
     @Id
@@ -55,17 +58,15 @@ public class UsuarioGruposEntity {
     @Builder.Default
     private Boolean esActivo = true;
 
-    // !! RELACIONES
+    // !! RELACIONES CORREGIDAS
 
     // Muchos grupos pertenecen a un rol
-    // Relación ManyToOne con Rol
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROL_ID", nullable = true)
-    @JsonIgnoreProperties({"grupos", "hibernateLazyInitializer", "handler"}) // Evita recursión infinita en JSON
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // <-- CORREGIDO: quitado "rol"
     private UsuarioRolEntity rol;
     
     // Un Grupo puede tener muchos Permisos
-    // Relación ManyToMany con Permisos
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "TBL_GRUPO_PERMISOS",
@@ -75,22 +76,22 @@ public class UsuarioGruposEntity {
             columnNames = {"USUARIO_GRUPO_ID", "USUARIO_PERMISOS_ID"}
         )
     )
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @Builder.Default
+    @JsonIgnoreProperties({"grupos", "hibernateLazyInitializer", "handler"}) // <-- CORREGIDO: "grupos" en lugar de "permisos"
     private Set<UsuarioPermisosEntity> permisos = new HashSet<>();
 
-    // Método helper para añadir permiso
+    // Métodos helper corregidos
     public void addPermiso(UsuarioPermisosEntity permiso) {
-        permisos.add(permiso);
+        this.permisos.add(permiso);
+        permiso.getGrupos().add(this); // <-- IMPORTANTE: mantener consistencia bidireccional
     }
     
-    // Método helper para eliminar permiso
     public void removePermiso(UsuarioPermisosEntity permiso) {
-        permisos.remove(permiso);
-        // Si tienes relación inversa:
-        // permiso.getGrupos().remove(this);
+        this.permisos.remove(permiso);
+        permiso.getGrupos().remove(this); // <-- IMPORTANTE: mantener consistencia bidireccional
     }
 
+    // Método mejorado para setRol
     public void setRol(UsuarioRolEntity nuevoRol) {
         // Si ya tenía un rol, quitar este grupo de ese rol
         if (this.rol != null) {
@@ -118,5 +119,4 @@ public class UsuarioGruposEntity {
             .esActivo(true)
             .permisos(new HashSet<>());
     }
-
 }
