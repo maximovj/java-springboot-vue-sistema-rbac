@@ -22,7 +22,7 @@ const salir =  async () =>  {
 
     if(desicion == 'yes') {
         const auth = useAuthStore();
-        auth.logout();
+        await auth.logout();
         window.location.href = "/";
     }
 };

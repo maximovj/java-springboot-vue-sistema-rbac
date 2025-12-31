@@ -3,6 +3,7 @@ import BaseService from '@/common/services/base.service'
 import { useSettingsStore } from '@/common/stores/settingsStore'
 import { useUiStore } from '../stores/uiStore'
 import { useAlertStore } from '../stores/alertStore'
+import { useAuthStore } from '../stores/authStore'
 
 class AutenticacionService extends BaseService {
   constructor() {
@@ -11,20 +12,22 @@ class AutenticacionService extends BaseService {
 
   async login(usuario, contrasena, recuerdame) {
     const ui = useUiStore();
-    const store = useSettingsStore();
-    const alert = useAlertStore();
     ui.loading = true;
 
     return this.custom('post', '/login', { usuario, contrasena, recuerdame })
       .then(res => {
-        store.loguearse(
-          res.data.contenido.acceso_token,
-          res.data.contenido.info_usuario,
-          recuerdame
-        )
+        const settings = useSettingsStore();
+        settings.recuerdame = recuerdame;
+
+        const auth = useAuthStore();
+        auth.loguearse(
+          res.data?.contenido?.acceso_token,
+          res.data?.contenido?.info_usuario,
+        );
         return res
       })
       .catch( err => {
+        const alert = useAlertStore();
         alert.alert({ 
           title:'Iniciar sesión',
           message: err.response.data?.error || err.message,
@@ -36,9 +39,9 @@ class AutenticacionService extends BaseService {
   }
 
   async logout() {
-    const store = useSettingsStore()
-    return this.custom('post', '/logout', store.usuario)
-      .finally(() => store.desloguearse())
+    const auth = useAuthStore()
+    return this.custom('post', '/logout', auth.usuario)
+      .finally(() => auth.desloguearse())
   }
 
   refresh() {

@@ -1,13 +1,9 @@
+// main.js - Versión simple
 import { createApp } from 'vue'
-
-import { useAuthStore } from './common/stores/authStore'
-
-import CommonPlugin from './plugins/common'
-
-import PiniaPlugin from './plugins/pinia'
-
 import App from './App.vue'
 import router from './router'
+import pinia from './plugins/pinia'
+import CommonPlugin from './plugins/common'
 
 import PrimeVue from "primevue/config";
 import SportYellowPreset from './themes/SportYellowTheme'
@@ -17,10 +13,8 @@ import '@styles/gradients.css'
 
 const app = createApp(App)
 
-app.use(PiniaPlugin)
-
-app.use(router)
-
+app.use(pinia)
+app.use(CommonPlugin)
 app.use(PrimeVue, {
   ripple: true,
   theme: {
@@ -33,9 +27,5 @@ app.use(PrimeVue, {
   }
 })
 
-app.use(CommonPlugin)
-
+app.use(router)
 app.mount('#app')
-
-const auth = useAuthStore();
-await auth.init();

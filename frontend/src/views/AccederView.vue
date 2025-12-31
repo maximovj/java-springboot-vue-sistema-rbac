@@ -82,14 +82,10 @@ export default {
         this.recuerdame,
       );
 
-      const settings = useSettingsStore();
-      console.log("settings.$state",settings.$state);
-      console.log("settings.estaLogueado", settings.estaLogueado);
-
-      if(settings.estaLogueado) {
+      const auth = useAuthStore();
+      if(auth.estaAutenticado) {
         // Sin recargar la pagina
         this.$router.push('/panel');
-        console.log(this.$router);
       }
 
       this.cargando = false;
