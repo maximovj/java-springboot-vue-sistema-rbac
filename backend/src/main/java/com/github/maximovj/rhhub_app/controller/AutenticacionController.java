@@ -97,6 +97,7 @@ public class AutenticacionController {
         .rol(usuario.getGrupo().getRol().getRolNombre())
         .usuario(usuario.getUsuario())
         .usuarioId(usuario.getUsuarioId())
+        .recuerdame(refreshToken.isRecuerdame())
         .build();
 
         return ApiResponse.ok("Acceso exitosa", new LoginOutDto(accessToken, usuarioDto));
@@ -146,6 +147,7 @@ public class AutenticacionController {
         .rol(usuario.getGrupo().getRol().getRolNombre())
         .usuario(usuario.getUsuario())
         .usuarioId(usuario.getUsuarioId())
+        .recuerdame(refreshTokenNuevo.isRecuerdame())
         .build();
 
         return ApiResponse.ok("renovar token generada correctamente", new LoginOutDto(accessToken, usuarioDto));

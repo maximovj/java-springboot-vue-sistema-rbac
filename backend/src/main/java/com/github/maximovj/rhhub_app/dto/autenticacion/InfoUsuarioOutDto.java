@@ -27,4 +27,6 @@ public class InfoUsuarioOutDto {
 
     private Set<UsuarioPermisosEntity> permisos;
 
+    private boolean recuerdame;
+
 }

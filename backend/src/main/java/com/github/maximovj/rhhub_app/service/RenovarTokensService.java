@@ -59,7 +59,7 @@ public class RenovarTokensService {
                 .maxAge(
                     token.isRecuerdame()
                         ? cookieRefreshTokenProperties.getMaxAge()
-                        : Duration.ofHours(2).toMillis() // o el tiempo que dure la sesión
+                        : jwtProperties.getExpirationTime() // o el tiempo que dure la sesión
                 )
                 // .domain(cookieRefreshTokenProperties.getDomain()) // SI usas dominio
                 .build();
