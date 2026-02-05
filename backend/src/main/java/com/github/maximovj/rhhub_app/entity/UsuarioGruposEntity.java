@@ -1,6 +1,7 @@
 package com.github.maximovj.rhhub_app.entity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,11 +24,18 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"rol", "permisos"})
+@EqualsAndHashCode(exclude = {"rol", "permisos"})
 @Builder
 @Entity
 @Table(
@@ -36,7 +44,6 @@ import lombok.NoArgsConstructor;
         @UniqueConstraint(columnNames = {"NOMBRE", "DESCRIPCION"})
     }
 )
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UsuarioGruposEntity {
 
     @Id
@@ -60,10 +67,15 @@ public class UsuarioGruposEntity {
 
     // !! RELACIONES CORREGIDAS
 
+    //@OneToMany(mappedBy = "grupo")
+    //@JsonIgnore // Importante para evitar recursividad
+    //private List<UsuarioEntity> usuarios;
+
     // Muchos grupos pertenecen a un rol
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROL_ID", nullable = true)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // <-- CORREGIDO: quitado "rol"
+    @JsonIgnore
+    //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // <-- CORREGIDO: quitado "rol"
     private UsuarioRolEntity rol;
     
     // Un Grupo puede tener muchos Permisos
@@ -77,7 +89,8 @@ public class UsuarioGruposEntity {
         )
     )
     @Builder.Default
-    @JsonIgnoreProperties({"grupos", "hibernateLazyInitializer", "handler"}) // <-- CORREGIDO: "grupos" en lugar de "permisos"
+    @JsonIgnore
+    //@JsonIgnoreProperties({"grupos", "hibernateLazyInitializer", "handler"}) // <-- CORREGIDO: "grupos" en lugar de "permisos"
     private Set<UsuarioPermisosEntity> permisos = new HashSet<>();
 
     // Métodos helper corregidos

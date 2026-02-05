@@ -3,6 +3,8 @@ package com.github.maximovj.rhhub_app.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
@@ -17,11 +19,18 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"grupos"})
+@EqualsAndHashCode(exclude = {"grupos"})
 @Builder
 @Entity
 @Table(name = "TBL_USUARIO_ROLES")
@@ -57,6 +66,7 @@ public class UsuarioRolEntity {
     // Relación con grupos (OneToMany si un rol puede tener varios grupos)
     @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
+    @JsonIgnore
     private List<UsuarioGruposEntity> grupos = new ArrayList<>();
     
     // Método helper para añadir grupo

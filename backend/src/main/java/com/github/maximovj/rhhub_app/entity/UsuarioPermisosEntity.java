@@ -20,12 +20,18 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"grupos", "estado"})
+@EqualsAndHashCode(exclude = {"grupos", "estado"})
 @Builder
 @Entity
 @Table(
@@ -36,7 +42,6 @@ import lombok.NoArgsConstructor;
         )
     }
 )
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UsuarioPermisosEntity {
 
     @Id
@@ -61,10 +66,9 @@ public class UsuarioPermisosEntity {
     // !! RELACIONES CORREGIDAS
 
     // Un permiso puede estar en muchos grupos
-    // IMPORTANTE: El mappedBy debe apuntar al nombre del atributo en la otra entidad
-    @ManyToMany(mappedBy = "permisos") // <-- CAMBIADO de "grupos" a "permisos"
+    @ManyToMany(mappedBy = "permisos", fetch = FetchType.LAZY)
     @Builder.Default
-    @JsonIgnore // <-- SOLUCIÓN: Ignora completamente esta relación en JSON
+    @JsonIgnore
     private Set<UsuarioGruposEntity> grupos = new HashSet<>();
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -74,20 +78,5 @@ public class UsuarioPermisosEntity {
     )
     @JsonIgnore
     private UsuarioPermisoEstadoEntity estado;
-
-    // Añade estos métodos para equals/hashCode seguros
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UsuarioPermisosEntity)) return false;
-        UsuarioPermisosEntity that = (UsuarioPermisosEntity) o;
-        return usuarioPermisosId != null && 
-               usuarioPermisosId.equals(that.usuarioPermisosId);
-    }
-    
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
     
 }

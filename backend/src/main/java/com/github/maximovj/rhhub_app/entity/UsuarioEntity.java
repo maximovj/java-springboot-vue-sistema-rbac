@@ -1,6 +1,7 @@
 package com.github.maximovj.rhhub_app.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,17 +18,24 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString(exclude = {"grupo", "estado"})
+@EqualsAndHashCode(exclude = {"grupo", "estado"})
 @Entity
 @Table(
     name = "TBL_USUARIOS", 
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"USUARIO", "EMAIL"})
+        @UniqueConstraint(columnNames = {"USUARIO", "CORREO"})
     }
 )
 public class UsuarioEntity {
@@ -46,30 +54,29 @@ public class UsuarioEntity {
     @JsonProperty("correo")
     private String correo;
 
-    @Column(name = "CONTRASENA", nullable = false, unique = false)
+    @Column(name = "CONTRASENA", nullable = false)
     @JsonProperty("contrasena")
     private String contrasena;
 
-    @Column(name = "ES_ACTIVO", nullable = false, unique = false)
+    @Column(name = "ES_ACTIVO", nullable = false)
     @JsonProperty("es_activo")
     private Boolean esActivo;
 
-    @Column(name = "TOKEN", nullable = true, unique = false)
+    @Column(name = "TOKEN")
     @JsonProperty("token")
     private String token;
 
     // !! RELACIONES
 
     // Usuario pertenece a 1 grupo
-    @ManyToOne
-    @JoinColumn(name = "USUARIO_GRUPO_ID", nullable = true, referencedColumnName = "USUARIO_GRUPO_ID")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USUARIO_GRUPO_ID")
+    @JsonIgnore
     private UsuarioGruposEntity grupo; 
 
     // Un usuario tiene un estado
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USUARIO_ESTADO_ID", nullable = true, referencedColumnName = "USUARIO_ESTADO_ID")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "USUARIO_ESTADO_ID")
+    @JsonIgnore
     private UsuarioEstadoEntity estado;
-
 }

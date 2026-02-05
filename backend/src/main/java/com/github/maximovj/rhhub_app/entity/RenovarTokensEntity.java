@@ -2,6 +2,8 @@ package com.github.maximovj.rhhub_app.entity;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,11 +15,18 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
-@NoArgsConstructor
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString(exclude = {"usuario"})
+@EqualsAndHashCode(exclude = {"usuario"})
 @Builder
 @Entity
 @Table(name = "RENOVAR_TOKENS")
@@ -36,6 +45,7 @@ public class RenovarTokensEntity {
 
     @ManyToOne
     @JoinColumn(name = "USUARIO_ID", nullable = false)
+    @JsonIgnore
     private UsuarioEntity usuario;
 
     @Column(name = "RECUERDAME", nullable = false)
