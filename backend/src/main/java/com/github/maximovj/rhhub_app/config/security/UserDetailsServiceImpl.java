@@ -20,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String nombreUsuario) {
-        UsuarioEntity usuario = this.usuarioRepository.findByUsuario(nombreUsuario)
+        UsuarioEntity usuario = this.usuarioRepository.findByUsuarioWithDetails(nombreUsuario)
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encotrado"));
 
         return User.builder()

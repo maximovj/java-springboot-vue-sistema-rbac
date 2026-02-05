@@ -9,7 +9,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,7 +20,7 @@ import java.util.List;
 public class AutenticacionJwtFilter extends OncePerRequestFilter {
 
     private final ServicioJwt servicioJwt;
-    private final UserDetailsService servicioDetallesUsuario;
+    private final UserDetailsServiceImpl servicioDetallesUsuario;
 
     private static final List<String> URLS_EXCLUIDAS = List.of(
         "/api/v1/autenticacion/login",
@@ -29,7 +28,7 @@ public class AutenticacionJwtFilter extends OncePerRequestFilter {
         "/api/v1/autenticacion/logout"
     );
 
-    public AutenticacionJwtFilter(ServicioJwt servicioJwt, UserDetailsService servicioDetallesUsuario) {
+    public AutenticacionJwtFilter(ServicioJwt servicioJwt, UserDetailsServiceImpl servicioDetallesUsuario) {
         this.servicioJwt = servicioJwt;
         this.servicioDetallesUsuario = servicioDetallesUsuario;
     }

@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.maximovj.rhhub_app.config.security.ServicioJwt;
+import com.github.maximovj.rhhub_app.config.security.UserDetailsServiceImpl;
 import com.github.maximovj.rhhub_app.dto.autenticacion.LoginInDto;
 import com.github.maximovj.rhhub_app.dto.autenticacion.LoginOutDto;
 import com.github.maximovj.rhhub_app.dto.autenticacion.InfoUsuarioOutDto;
@@ -46,7 +46,7 @@ public class AutenticacionController {
     private ServicioJwt servicioJwt;
 
     @Autowired
-    private UserDetailsService servicioDetallesUsuario;
+    private UserDetailsServiceImpl servicioDetallesUsuario;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
