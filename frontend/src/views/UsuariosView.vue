@@ -28,8 +28,9 @@
 import usuariosService from '@/common/services/usuarios.service';
 import CellAccionesUsuario from '@/components/lazy/usuarios/CellAccionesUsuario.vue';
 import CellActivoUsuario from '@/components/lazy/usuarios/CellActivoUsuario.vue';
-import { scopedLogger } from '@/common/utils/loggerUtils';
 import { markRaw } from 'vue';
+
+import { scopedLogger } from '@/common/utils/loggerUtils';
 const logger = scopedLogger("UsuariosView.vue");
 
 export default {

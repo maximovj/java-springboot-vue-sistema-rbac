@@ -4,6 +4,7 @@ import { useSettingsStore } from '@/common/stores/settingsStore'
 import { useUiStore } from '../stores/uiStore'
 import { useAlertStore } from '../stores/alertStore'
 import { useAuthStore } from '../stores/authStore'
+
 import { scopedLogger } from '../utils/loggerUtils'
 const logger = scopedLogger("autentication.service.js");
 

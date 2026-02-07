@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { useSettingsStore } from './settingsStore';
 import { useAlertStore } from './alertStore';
 import autenticacionService from '../services/autenticacion.service';
+
 import { scopedLogger } from '../utils/loggerUtils';
 const logger = scopedLogger("authStore.js");
 
