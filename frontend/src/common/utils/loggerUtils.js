@@ -34,8 +34,8 @@ export const error = (...args) => {
 };
 
 export const scopedLogger = (scope) => ({
-  log: (...args) => log(`[${scope} ${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
-  info: (...args) => info(`[${scope} ${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
-  warn: (...args) => warn(`[${scope} ${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
-  error: (...args) => error(`[${scope} ${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
+  log: (...args) => log(`[${scope}${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
+  info: (...args) => info(`[${scope}${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
+  warn: (...args) => warn(`[${scope}${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
+  error: (...args) => error(`[${scope}${args[0]? ('::'+args[0]) : ''}]`, args.slice(1)),
 });

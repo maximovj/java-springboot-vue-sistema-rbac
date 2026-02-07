@@ -3,6 +3,9 @@ import { ref, defineProps, watch } from "vue";
 import { onMounted, onUpdated, onUnmounted } from "vue";
 import usuariosService from "@/common/services/usuarios.service";
 
+import { scopedLogger } from "@/common/utils/loggerUtils";
+const logger = scopedLogger("EditarUsuarios.vue");
+
 const props = defineProps({
     usuarioId: {
         type: Number,
@@ -22,26 +25,26 @@ const grupos = ref([
 
 onMounted(async () => {
     tituloCabecera.value = "Usuario: ...";
-    console.log("Componente montado");
+    logger.info("onMounted","Componente montado");
 });
 
 onUpdated(() => {
-  console.log("Componente actualizado");
+  logger.info("onUpdated","Componente actualizado");
 });
 
 onUnmounted(() => {
-  console.log("Componente destruido");
+  logger.info("onUnmounted","Componente destruido");
 });
 
 watch(visible, async (isVisible) => {
     if(!isVisible) return;
     cargandoDatos.value = true;
     const res = await usuariosService.getById(props.usuarioId);
-    console.log("🧟","EditarUsuario.vue::watch", res);
+    logger.info("watch", {res});
     
     if(res.data?.exitosa) {
         usuario.value = res.data?.contenido;
-        console.log("🧟", "EditarUsuario.vue::watch", "usuario.value => ", usuario.value);
+        logger.info("watch::if", "usuario.value", usuario.value);
         tituloCabecera.value = "Usuario: " + usuario.value.usuario;
         grupoSeleccionado.value = usuario.value?.grupo?.usuario_grupo_id;
     }

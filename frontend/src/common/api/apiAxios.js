@@ -5,6 +5,9 @@ import { useSettingsStore } from '@/common/stores/settingsStore'
 import { useAuthStore } from '@/common/stores/authStore'
 import autenticacionService from '../services/autenticacion.service'
 
+import { scopedLogger } from '../utils/loggerUtils';
+const logger = scopedLogger("apiAxios.js");
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1',
   withCredentials: true // 🔥 NECESARIO para cookies HttpOnly
@@ -68,7 +71,7 @@ api.interceptors.response.use(
           return api(original)
         }
       } catch (e) {
-        console.log("Hubo un error" ,"apiAxios.js::e", {e});
+        logger.error("response.error", {e});
         const auth = useAuthStore();
         await auth.logout();
 

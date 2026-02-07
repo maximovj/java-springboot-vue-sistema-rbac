@@ -16,7 +16,7 @@ class AutenticacionService extends BaseService {
     const ui = useUiStore();
     ui.loading = true;
 
-    return this.custom('post', '/login', { usuario, contrasena, recuerdame })
+    return await this.custom('post', '/login', { usuario, contrasena, recuerdame })
       .then(res => {
         const auth = useAuthStore();
         auth.loguearse(
@@ -43,8 +43,8 @@ class AutenticacionService extends BaseService {
     const ui = useUiStore();
     ui.loading = true;
 
-    return this.custom('post', '/logout', settings.usuario, { headers: { 'Content-Type': 'text/plain' } })
-      .catch((e) => console.log("Hubo un error","autentication.service.js::logout", {e}))
+    return await this.custom('post', '/logout', settings.usuario, { headers: { 'Content-Type': 'text/plain' } })
+      .catch((e) => logger.error("logout", {e}))
       .finally(() => {
         auth.desloguearse();
         ui.loading = false;
@@ -66,7 +66,7 @@ class AutenticacionService extends BaseService {
         return res
     })
     .catch( async err => {
-      console.log("Hubo un error","autentication.service.js::refresh", {err});
+      logger.error("refresh", {err});
       await this.logout();
       const auth = useAuthStore();
       auth.desloguearse();

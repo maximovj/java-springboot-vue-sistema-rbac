@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async init(msg = 'authStore.js :: linea 19') {
-      console.log(msg);
+      logger.info("init", {msg});
 
       const settings = useSettingsStore();
       if(this.inicializado && settings.recuerdame) return;
@@ -49,7 +49,7 @@ export const useAuthStore = defineStore('auth', {
 
         }
       } catch (e) {
-        console.log("Hubo un error","authStore.js::init",{e});
+        logger.error("init::catch", {e});
         await autenticacionService.logout();
         const alert = useAlertStore();
         await alert.alert({

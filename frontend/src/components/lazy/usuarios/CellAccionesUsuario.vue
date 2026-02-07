@@ -1,9 +1,13 @@
 <!-- AccionesCell.vue -->
 <script setup>
 defineProps({ row: Object });
+import { scopedLogger } from '@/common/utils/loggerUtils';
 
-const editar = () => { console.log("Editar", row.usuario_id) }
-const eliminar = () => { console.log("Eliminar", row.usuario_id) }
+
+const logger = scopedLogger("CellAccionesUsuario.vue");
+
+const editar = () => { logger.info("editar", "row.usuario_id", row.usuario_id) }
+const eliminar = () => { logger.info("eliminar", "row.usuario_id", row.usuario_id) }
 </script>
 
 <template>
