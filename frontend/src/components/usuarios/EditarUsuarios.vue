@@ -14,17 +14,22 @@ const props = defineProps({
     }
 });
 
-const tituloCabecera = ref(""); 
-const visible = ref(false);
-const cargandoDatos = ref(false);
-const usuario = ref({});
-const grupoSeleccionado = ref(1);
-const grupos = ref([
-    { name: 'ADMINISTRADOR', code: 1 },
-]);
+const initialState = {
+  visible: false,
+  usuario: {},
+  cargandoDatos: false,
+  tituloCabecera: "EDITAR USUARIO",
+  grupoSeleccionado: 1,
+  grupos: [{ name: 'ADMINISTRADOR', code: 1 }]
+};
+
+const data = ref({ ...initialState });
+
+function resetData() {
+  data.value = { ...initialState };
+}
 
 onMounted(async () => {
-    tituloCabecera.value = "Usuario: ...";
     logger.info("onMounted","Componente montado");
 });
 
@@ -36,29 +41,33 @@ onUnmounted(() => {
   logger.info("onUnmounted","Componente destruido");
 });
 
-watch(visible, async (isVisible) => {
-    if(!isVisible) return;
-    cargandoDatos.value = true;
+watch(() => data.value.visible, async (isVisible) => {
+    if (!isVisible) {
+        resetData(); // reset solo al cerrar
+        return;
+    }
+
+    data.value.cargandoDatos = true;
     const res = await usuariosService.getById(props.usuarioId);
     logger.info("watch", {res});
     
     if(res.data?.exitosa) {
-        usuario.value = res.data?.contenido;
-        logger.info("watch::if", "usuario.value", usuario.value);
-        tituloCabecera.value = "Usuario: " + usuario.value.usuario;
-        grupoSeleccionado.value = usuario.value?.grupo?.usuario_grupo_id;
+        data.value.usuario = res.data?.contenido;
+        logger.info("watch::if", "data.value.usuario", data.value.usuario);
+        //data.value.tituloCabecera = "Usuario: " + data.value.usuario.usuario;
+        data.value.grupoSeleccionado = data.value.usuario?.grupo?.usuario_grupo_id;
     }
 
-    cargandoDatos.value = false;
+    data.value.cargandoDatos = false;
 });
 </script>
 
 <template>
-        <Button icon="pi pi-pencil" class="p-button-text p-button-warning mr-2" @click="visible = true"  />
+        <Button icon="pi pi-pencil" class="p-button-text p-button-warning mr-2" @click="data.visible = true"  />
         <Dialog
-            v-model:visible="visible"
+            v-model:visible="data.visible"
             modal
-            :header="tituloCabecera"
+            :header="data.tituloCabecera"
             :style="{ width: '50rem' }"
             :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
             >
@@ -67,22 +76,22 @@ watch(visible, async (isVisible) => {
                 </span>
                 
                 <CustomField label="Nombre de usuario" forId="usuario">
-                <Skeleton v-if="cargandoDatos" />
+                <Skeleton v-if="data.cargandoDatos" />
                 <InputText
                     v-else
                     id="usuario"
                     class="flex-auto"
-                    v-model="usuario.usuario"
+                    v-model="data.usuario.usuario"
                 />
                 </CustomField>
 
                 <CustomField label="Correo electrónico" forId="correo">
-                <Skeleton v-if="cargandoDatos" />
+                <Skeleton v-if="data.cargandoDatos" />
                 <InputText
                     v-else
                     id="correo"
                     class="flex-auto"
-                    v-model="usuario.correo"
+                    v-model="data.usuario.correo"
                 />
                 </CustomField>
 
@@ -91,24 +100,24 @@ watch(visible, async (isVisible) => {
                 </Divider>
 
                 <CustomField label="¿Es activo?">
-                <Skeleton v-if="cargandoDatos" width="12rem" />
-                <ToggleSwitch v-else v-model="usuario.es_activo" />
+                <Skeleton v-if="data.cargandoDatos" width="12rem" />
+                <ToggleSwitch v-else v-model="data.usuario.es_activo" />
                 </CustomField>
 
                 <CustomField label="Seleccione un grupo">
-                <Skeleton v-if="cargandoDatos" width="12rem" />
+                <Skeleton v-if="data.cargandoDatos" width="12rem" />
                 <Select
                     v-else
-                    :disabled="!usuario.es_activo"
-                    v-model="grupoSeleccionado"
-                    :options="grupos"
+                    :disabled="!data.usuario.es_activo"
+                    v-model="data.grupoSeleccionado"
+                    :options="data.grupos"
                     optionValue="code"
                     optionLabel="name"
                 />
                 </CustomField>
                 <template #footer>
-                    <Button type="button" label="Cancelar" severity="secondary" @click="visible = false"></Button>
-                    <Button type="button" label="Guardar" @click="visible = false"></Button>
+                    <Button type="button" label="Cancelar" severity="secondary" @click="data.visible = false"></Button>
+                    <Button type="button" label="Guardar" @click="data.visible = false"></Button>
                 </template>
         </Dialog>
 </template>
