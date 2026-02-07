@@ -13,6 +13,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -45,29 +48,52 @@ public class AutenticacionJwtFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
         final String authHeader = request.getHeader("Authorization");
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         final String jwt = authHeader.substring(7);
-        final String nombreUsuario = servicioJwt.extraerNombreUsuario(jwt);
-        
-        if (nombreUsuario != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails detallesUsuario = this.servicioDetallesUsuario.loadUserByUsername(nombreUsuario);
-            
+        String nombreUsuario = null;
+
+        try {
+            nombreUsuario = servicioJwt.extraerNombreUsuario(jwt);
+        } catch (ExpiredJwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token expirado");
+            return;
+        } catch (JwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token inválido");
+            return;
+        }
+
+        if (nombreUsuario != null &&
+            SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            UserDetails detallesUsuario =
+                    servicioDetallesUsuario.loadUserByUsername(nombreUsuario);
+
             if (servicioJwt.esTokenValido(jwt, detallesUsuario)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    detallesUsuario,
-                    null,
-                    detallesUsuario.getAuthorities()
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                detallesUsuario,
+                                null,
+                                detallesUsuario.getAuthorities()
+                        );
+
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
                 );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         filterChain.doFilter(request, response);
     }
+
 }
