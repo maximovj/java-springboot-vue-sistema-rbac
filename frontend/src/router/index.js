@@ -2,6 +2,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useSettingsStore } from '@/common/stores/settingsStore'
 import { useAuthStore } from '@/common/stores/authStore'
+import { PERMISOS } from '@/common/constants/permisos'
+import { useAlertStore } from '@/common/stores/alertStore'
+
+import { scopedLogger } from '@/common/utils/loggerUtils'
+import { MODULOS } from '@/common/constants/modulos'
+const logger = scopedLogger("router::index.js");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,7 +28,7 @@ const router = createRouter({
       path: '/usuarios',
       name: 'usuarios',
       component: () => import('@/views/UsuariosView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, modulo: MODULOS.USUARIOS, permiso: PERMISOS.USUARIOS.VIEW }
     },
     {
       path: '/configuracion',
@@ -35,32 +41,46 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const auth = useAuthStore()
+  const auth = useAuthStore();
 
-  // Si la autenticación no está inicializada, inicializarla
+  // 1. Inicializar auth una sola vez
   if (!auth.inicializado) {
     try {
-      await auth.init("router>index.js::beforeEach : Inicializar datos...")
-      auth.inicializado = true
+      await auth.init("router>index.js::beforeEach : Inicializar datos...");
     } catch (error) {
-      auth.inicializado = true;
-      console.error('Error inicializando autenticación:', error)
+      logger.error("router.beforeEach::catch", 'Error inicializando autenticación:', error);
+    } finally {
+      auth.inicializado = true
     }
   }
 
-  // Si la ruta requiere autenticación y no está logueado
-  if (to.meta.requiresAuth && !auth.estaAutenticado) {
-    next({ name: 'acceder' })
-    return
+  if(auth.esSuperAdministrador == false) {
+    // 2. Rutas que requieren autenticación
+    if (to.meta.requiresAuth && !auth.estaAutenticado) {
+      return next({ name: 'acceder' })
+    }
+
+    // 3. Rutas solo para invitados
+    if (to.meta.requiresGuest && auth.estaAutenticado) {
+      return next({ name: 'panel' })
+    }
+
+    // 4. 🔐 Validación de permisos (NUEVO)
+    if (to.meta.modulo && to.meta.permiso) {
+      // Seguridad extra por si permisos aún no existen
+      if (!auth.hasPermiso || !auth.hasPermiso(to.meta.modulo, to.meta.permiso)) {
+        const customAlert = useAlertStore();
+        await customAlert.alert({
+          title: 'ACCESO NO AUTORIZADO',
+          message: 'No tiene permiso suficiente',
+        }); 
+        return next({ name: 'panel' }) // o 403 si prefieres
+      }
+    }
   }
-  
-  // Si la ruta es para invitados y ya está autenticado
-  if (to.meta.requiresGuest && auth.estaAutenticado) {
-    next({ name: 'panel' })
-    return
-  }
-  
+
   next()
 })
+
 
 export default router
