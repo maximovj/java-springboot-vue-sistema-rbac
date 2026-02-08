@@ -3,11 +3,16 @@
     :value="value"
     :filters="filters"
     paginator
+    lazy
     :rows="localRows"
+    :first="first"
+    :totalRecords="totalRecords"
     stripedRows
     showGridlines
     :loading="localLoading"
+    @page="onPage"
   >
+  
     <slot />
 
     <template #paginatorcontainer="{ first, last, page, pageCount, prevPageCallback, nextPageCallback, rowChangeCallback, totalRecords }">
@@ -89,32 +94,44 @@
           </div>
         </div>
     </template>
+
   </DataTable>
 </template>
 
 <script>
-import { get, set } from '@vueuse/core';
 import DataTable from 'primevue/datatable'
 
 export default {
   components: { DataTable },
+
   props: {
     value: Array,
     filters: Object,
     loading: Boolean,
-    rows: Number
+    rows: Number,
+    totalRecords: Number,
+    first: Number
   },
+
+  emits: ['update:rows', 'page'],
+
   computed: {
     localRows: {
       get() {
-        return this.rows || 10;
+        return this.rows || 10
       },
-      set(value) {
-        this.$emit('update:rows', value);
+      set(val) {
+        this.$emit('update:rows', val)
       }
     },
     localLoading() {
-      return this.loading || false;
+      return this.loading || false
+    }
+  },
+
+  methods: {
+    onPage(event) {
+      this.$emit('page', event)
     }
   }
 }
