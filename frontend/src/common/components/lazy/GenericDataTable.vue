@@ -3,9 +3,10 @@
     :value="value"
     :filters="filters"
     paginator
-    :rows="rows"
+    :rows="localRows"
     stripedRows
     showGridlines
+    :loading="localLoading"
   >
     <slot />
 
@@ -17,9 +18,9 @@
             <div>
               <span class="text-xs text-gray-400 block mb-1">FILAS</span>
               <Dropdown 
-                :options="[2, 10, 50, 100]" 
-                v-model="rows" 
-                @change="rowChangeCallback(rows)"
+                :options="[10, 50, 100]" 
+                v-model="localRows" 
+                @change="rowChangeCallback(localRows)"
                 style="height: 36px;"
               />
             </div>
@@ -92,6 +93,7 @@
 </template>
 
 <script>
+import { get, set } from '@vueuse/core';
 import DataTable from 'primevue/datatable'
 
 export default {
@@ -99,11 +101,20 @@ export default {
   props: {
     value: Array,
     filters: Object,
+    loading: Boolean,
     rows: Number
   },
-  data() {
-    return {
-      rows: this.rows || 10
+  computed: {
+    localRows: {
+      get() {
+        return this.rows || 10;
+      },
+      set(value) {
+        this.$emit('update:rows', value);
+      }
+    },
+    localLoading() {
+      return this.loading || false;
     }
   }
 }

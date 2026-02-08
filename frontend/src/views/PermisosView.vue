@@ -40,13 +40,13 @@
           <div v-if="filtersVisible" class="flex flex-col gap-4">
             <!-- Filtros -->
             
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 
                 <span class="p-input-icon-left w-full">
-                  <span><i class="pi pi-search" /> <span class="font-bold text-sm">Nombre</span></span>
+                  <span><i class="pi pi-search" /> <span class="font-bold text-sm">Acción</span></span>
                   <InputText
-                    v-model="searchForm.nombre"
-                    placeholder="Buscar por nombre..."
+                    v-model="searchForm.accion"
+                    placeholder="Buscar por acción..."
                     class="w-full"
                   />
                 </span>
@@ -59,39 +59,8 @@
                     class="w-full"
                   />
                 </span>
-
-                <span class="p-input-icon-left w-full">
-                  <span><i class="pi pi-tag" /> <span class="font-bold text-sm">Estado</span></span>
-                  <Select
-                    v-model="searchForm.estado"
-                    :options="estados"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Seleccionar estado..."
-                    showClear
-                    class="w-full"
-                  >
-                    <!-- Templates existentes -->
-                  </Select>
-                </span>
-
-                <span class="w-full">
-                  <span>
-                    <i class="pi pi-calendar" />
-                    <span class="font-bold text-sm">Fecha creación (Rango)</span>
-                  </span>
-
-                  <DatePicker
-                    v-model="searchForm.fechaCreacion"
-                    selectionMode="range"
-                    dateFormat="yy-mm-dd"
-                    showIcon
-                    class="w-full"
-                  />
-                </span>
-
+               
               </div>
-            
 
             <!-- Acciones -->
             <div class="flex justify-between items-center">
@@ -125,24 +94,12 @@
     <GenericDataTable
       :value="permisos"
       :filters="filters"
-      v-model:rows="rows"
+      v-model:rows="dataTableRows"
+      :loading="cargandoRegistros"
     >
-      <Column field="id" header="ID" sortable style="width: 80px" />
-      <Column field="nombre" header="Nombre" sortable />
+      <Column field="permiso_id" header="ID" sortable style="width: 80px" />
+      <Column field="accion" header="Accion" sortable />
       <Column field="modulo" header="Módulo" sortable />
-      <Column field="estado" header="Estado" sortable>
-        <template #body="{ data }">
-          <Tag
-            :value="data.estado"
-            :severity="getEstadoSeverity(data.estado)"
-          />
-        </template>
-      </Column>
-      <Column field="fechaCreacion" header="Fecha Creación" sortable>
-        <template #body="{ data }">
-          {{ formatDate(data.fechaCreacion) }}
-        </template>
-      </Column>
       <Column header="Acciones" style="width: 180px">
         <template #body="{ data }">
           <div class="flex gap-2">
@@ -183,6 +140,10 @@ import Button from 'primevue/button'
 import Select from 'primevue/select'
 import Tag from 'primevue/tag'
 import { now } from '@vueuse/core'
+import permisosService from '@/common/services/permisos.service'
+
+import { scopedLogger } from '@/common/utils/loggerUtils'
+const logger = scopedLogger('PermisosView.vue');
 
 export default {
   name: 'GestionPermisos',
@@ -202,35 +163,22 @@ export default {
     fechaInicio.setFullYear(fechaFin.getFullYear() - 10);
 
     return {
-      rowsDataTable: 10,
-      permisos: [
-        { id: 1, nombre: 'Ver Usuarios', modulo: 'Usuarios', estado: 'Activo', fechaCreacion: new Date('2024-01-10') },
-        { id: 2, nombre: 'Crear Usuario', modulo: 'Usuarios', estado: 'Activo', fechaCreacion: new Date('2024-01-15') },
-        { id: 3, nombre: 'Eliminar Usuario', modulo: 'Usuarios', estado: 'Inactivo', fechaCreacion: new Date('2024-02-01') },
-        { id: 4, nombre: 'Ver Reportes', modulo: 'Reportes', estado: 'Activo', fechaCreacion: new Date('2024-02-10') },
-        { id: 5, nombre: 'Exportar Reportes', modulo: 'Reportes', estado: 'Inactivo', fechaCreacion: new Date('2024-03-05') },
-        { id: 6, nombre: 'Editar Perfil', modulo: 'Perfil', estado: 'Activo', fechaCreacion: new Date('2024-03-15') },
-        { id: 7, nombre: 'Cambiar Contraseña', modulo: 'Perfil', estado: 'Activo', fechaCreacion: new Date('2024-04-01') },
-        { id: 8, nombre: 'Acceso Dashboard', modulo: 'Dashboard', estado: 'Activo', fechaCreacion: new Date('2024-04-10') }
-      ],
+      cargandoRegistros: false,
+
+      dataTableRows: 10,
+      
+      permisos: [],
 
       searchForm: {
-        nombre: null,
+        accion: null,
         modulo: null,
-        estado: null,
-        fechaCreacion: [fechaInicio, fechaFin]
       },
 
       filtersVisible: false,
 
       filters: {
-        nombre: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        accion: { value: null, matchMode: FilterMatchMode.CONTAINS },
         modulo: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        estado: { value: null, matchMode: FilterMatchMode.EQUALS },
-        fechaCreacion: { 
-          value: [fechaInicio, fechaFin],
-          matchMode: FilterMatchMode.BETWEEN 
-        }
       },
 
       estados: [
@@ -252,12 +200,12 @@ export default {
   computed: {
   activeFilters() {
     return [
-      this.searchForm.nombre && {
+      this.searchForm.accion && {
         icon: 'pi pi-search',
-        key: 'nombre',
-        label: 'Nombre',
-        value: this.searchForm.nombre,
-        onRemove: () => this.searchForm.nombre = null
+        key: 'accion',
+        label: 'Acción',
+        value: this.searchForm.accion,
+        onRemove: () => this.searchForm.accion = null
       },
       this.searchForm.modulo && {
         icon: 'pi pi-box',
@@ -266,22 +214,6 @@ export default {
         value: this.searchForm.modulo,
         onRemove: () => this.searchForm.modulo = null
       },
-      this.searchForm.estado && {
-        icon: 'pi pi-tag',
-        key: 'estado',
-        label: 'Estado',
-        value: this.getEstadoLabel(this.searchForm.estado),
-        onRemove: () => this.searchForm.estado = null
-      },
-      this.searchForm.fechaCreacion && 
-      this.searchForm.fechaCreacion[0] && 
-      this.searchForm.fechaCreacion[1] && {
-        icon: 'pi pi-calendar',
-        key: 'fechaCreacion',
-        label: 'Fecha creación',
-        value: `${this.formatDate(this.searchForm.fechaCreacion[0])} - ${this.formatDate(this.searchForm.fechaCreacion[1])}`,
-        onRemove: () => this.searchForm.fechaCreacion = [null, null]
-      }
     ].filter(Boolean)
   },
 },
@@ -292,17 +224,14 @@ export default {
     },
 
     aplicarBusqueda() {
-      this.filters.nombre.value = this.searchForm.nombre
+      this.filters.accion.value = this.searchForm.accion
       this.filters.modulo.value = this.searchForm.modulo
-      this.filters.estado.value = this.searchForm.estado
-      this.filters.fechaCreacion.value = this.searchForm.fechaCreacion
     },
 
     clearFilters() {
       this.searchForm = {
-        nombre: null,
-        modulo: null,
-        estado: null
+        accion: null,
+        modulo: null
       }
       this.aplicarBusqueda()
     },
@@ -332,7 +261,33 @@ export default {
     formatDate(date) {
       if (!date) return ''
       return date.toLocaleDateString()
+    },
+
+    async cargarPermisos() {
+      this.cargandoRegistros = true;
+
+      await permisosService.getAll()
+        .then(response => {
+          logger.info('cargarPermisos', 'Permisos cargados:', response.data);
+          if(response.data?.exitosa) {
+            const contenido = response.data?.contenido?.content || [];
+            logger.info('cargarPermisos', `Permisos obtenidos: ${contenido.length}`, contenido);
+            this.permisos = contenido;
+          } else {
+            logger.warn('cargarPermisos', 'Respuesta exitosa pero sin datos de permisos:', response.data);
+          }
+        })
+        .catch(error => {
+          console.error('Error al cargar permisos:', error)
+        })
+        .finally(() => {
+          this.cargandoRegistros = false;
+        });
     }
+  },
+
+  mounted() {
+    this.cargarPermisos();
   }
 }
 </script>

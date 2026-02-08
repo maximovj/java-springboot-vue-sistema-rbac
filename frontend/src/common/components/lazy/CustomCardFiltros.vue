@@ -7,7 +7,7 @@
         <div @click="toggle" class="flex items-center cursor-pointer gap-2">
           <i 
             class="pi" 
-            :class="[filtersVisible ? 'pi-chevron-down' : 'pi-chevron-right']"
+            :class="[visible ? 'pi-chevron-down' : 'pi-chevron-right']"
           ></i>
           <slot name="title" />
         </div>
