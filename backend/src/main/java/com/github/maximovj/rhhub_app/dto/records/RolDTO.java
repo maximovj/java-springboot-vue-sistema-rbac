@@ -6,19 +6,19 @@ import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.entity.UsuarioRolEntity;
 
 public record RolDTO(
-    Long rolId,
-    String rolNombre,
-    String rolDescripcion,
-    Boolean rolEsAdministrador,
-    Boolean esActivo,
+    Long rol_id,
+    String nombre,
+    String descripcion,
+    Boolean es_administrador,
+    Boolean es_activo,
     List<GrupoEntity> grupos) {
 
         public RolDTO(UsuarioRolEntity e) {
-            this(e.getRolId(), e.getRolNombre(), e.getRolDescripcion(), e.getRolEsAdministrador(), e.getEsActivo(), e.getGrupos());
+            this(e.getRolId(), e.getNombre(), e.getDescripcion(), e.getEsAdministrador(), e.getEsActivo(), e.getGrupos());
         }
 
         public RolDTO(UsuarioRolEntity e, List<GrupoEntity> grupos) {
-            this(e.getRolId(), e.getRolNombre(), e.getRolDescripcion(), e.getRolEsAdministrador(), e.getEsActivo(), grupos);
+            this(e.getRolId(), e.getNombre(), e.getDescripcion(), e.getEsAdministrador(), e.getEsActivo(), grupos);
         }
     
 }
