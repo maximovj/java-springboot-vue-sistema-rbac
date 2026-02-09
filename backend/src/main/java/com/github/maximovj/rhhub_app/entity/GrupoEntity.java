@@ -39,18 +39,18 @@ import lombok.ToString;
 @Builder
 @Entity
 @Table(
-    name = "TBL_USUARIO_GRUPOS",
+    name = "TBL_GRUPOS",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"NOMBRE", "DESCRIPCION"})
     }
 )
-public class UsuarioGruposEntity {
+public class GrupoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="USUARIO_GRUPO_ID", nullable = false, unique = true)
-    @JsonProperty("usuario_grupo_id")
-    private Long usuarioGrupoId;
+    @Column(name="GRUPO_ID", nullable = false, unique = true)
+    @JsonProperty("grupo_id")
+    private Long grupoId;
 
     @Column(name="NOMBRE", nullable = false, unique = true)
     @JsonProperty("nombre")
@@ -81,11 +81,11 @@ public class UsuarioGruposEntity {
     // Un Grupo puede tener muchos Permisos
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "TBL_USUARIO_GRUPO_PERMISO",
-        joinColumns = @JoinColumn(name = "USUARIO_GRUPO_ID"),
+        name = "TBL_GRUPO_PERMISO",
+        joinColumns = @JoinColumn(name = "GRUPO_ID"),
         inverseJoinColumns = @JoinColumn(name = "PERMISO_ID"),
         uniqueConstraints = @UniqueConstraint(
-            columnNames = {"USUARIO_GRUPO_ID", "PERMISO_ID"}
+            columnNames = {"GRUPO_ID", "PERMISO_ID"}
         )
     )
     @Builder.Default
@@ -127,8 +127,8 @@ public class UsuarioGruposEntity {
     }
     
     // Método estático para builder
-    public static UsuarioGruposEntityBuilder builder() {
-        return new UsuarioGruposEntityBuilder()
+    public static GrupoEntityBuilder builder() {
+        return new GrupoEntityBuilder()
             .esActivo(true)
             .permisos(new HashSet<>());
     }

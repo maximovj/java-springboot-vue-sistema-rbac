@@ -10,9 +10,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.github.maximovj.rhhub_app.config.properties.SeederProperties;
-import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.entity.UsuarioRolEntity;
-import com.github.maximovj.rhhub_app.repository.UsuarioGruposRepository;
+import com.github.maximovj.rhhub_app.repository.GrupoRepository;
 import com.github.maximovj.rhhub_app.repository.UsuarioPermisosRepository;
 import com.github.maximovj.rhhub_app.repository.UsuarioRolRepository;
 
@@ -30,7 +30,7 @@ public class UsuarioRolSeeder implements ApplicationRunner {
     UsuarioPermisosRepository permisosRepository;
 
     @Autowired
-    UsuarioGruposRepository gruposRepository;
+    GrupoRepository gruposRepository;
 
     @Autowired
     SeederProperties seederProperties;
@@ -77,14 +77,14 @@ public class UsuarioRolSeeder implements ApplicationRunner {
             boolean esAdministrador,
             String nombreGrupo
     ) {
-        Optional<UsuarioGruposEntity> grupoOpt = gruposRepository.findByNombre(nombreGrupo);
+        Optional<GrupoEntity> grupoOpt = gruposRepository.findByNombre(nombreGrupo);
 
         if (!grupoOpt.isPresent()) {
             System.out.println("Grupo " + nombreGrupo + " no encontrado. Rol " + nombreRol + " no creado.");
             return;
         }
 
-        UsuarioGruposEntity grupo = grupoOpt.get();
+        GrupoEntity grupo = grupoOpt.get();
 
         UsuarioRolEntity rol = UsuarioRolEntity.builder()
                 .rolNombre(nombreRol)

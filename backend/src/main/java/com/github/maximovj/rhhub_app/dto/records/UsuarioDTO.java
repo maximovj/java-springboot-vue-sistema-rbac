@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.github.maximovj.rhhub_app.entity.UsuarioEntity;
 import com.github.maximovj.rhhub_app.entity.UsuarioEstadoEntity;
-import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 
 public record UsuarioDTO(
     Long usuario_id,
@@ -12,7 +12,7 @@ public record UsuarioDTO(
     String correo,
     Boolean es_activo,
     String token,
-    UsuarioGruposEntity grupo,
+    GrupoEntity grupo,
     UsuarioEstadoEntity estado) {
 
     public UsuarioDTO(UsuarioEntity e) {
@@ -25,7 +25,7 @@ public record UsuarioDTO(
             e.getEstado());
     }
 
-    public UsuarioDTO(UsuarioEntity e, UsuarioGruposEntity grupo, UsuarioEstadoEntity estado) {
+    public UsuarioDTO(UsuarioEntity e, GrupoEntity grupo, UsuarioEstadoEntity estado) {
         this(e.getUsuarioId(),
             e.getUsuario(),
             e.getCorreo(),

@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 import com.github.maximovj.rhhub_app.config.properties.SeederProperties;
 import com.github.maximovj.rhhub_app.entity.UsuarioEntity;
 import com.github.maximovj.rhhub_app.entity.UsuarioEstadoEntity;
-import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.repository.UsuarioEstadoRepository;
-import com.github.maximovj.rhhub_app.repository.UsuarioGruposRepository;
+import com.github.maximovj.rhhub_app.repository.GrupoRepository;
 import com.github.maximovj.rhhub_app.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
@@ -32,7 +32,7 @@ public class UsuarioSeeder implements ApplicationRunner {
     UsuarioEstadoRepository usuarioEstadoRepository;
 
     @Autowired
-    UsuarioGruposRepository gruposRepository;
+    GrupoRepository gruposRepository;
 
     @Autowired
     SeederProperties seederProperties;
@@ -93,7 +93,7 @@ public class UsuarioSeeder implements ApplicationRunner {
         Optional<UsuarioEstadoEntity> estadoOpt =
                 usuarioEstadoRepository.findByEstado(estadoNombre);
 
-        Optional<UsuarioGruposEntity> grupoOpt =
+        Optional<GrupoEntity> grupoOpt =
                 gruposRepository.findByNombre(grupoNombre);
 
         if (estadoOpt.isEmpty() || grupoOpt.isEmpty()) {

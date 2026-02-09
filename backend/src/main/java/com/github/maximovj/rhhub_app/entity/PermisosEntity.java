@@ -64,6 +64,6 @@ public class PermisosEntity {
     @ManyToMany(mappedBy = "permisos", fetch = FetchType.LAZY)
     @Builder.Default
     @JsonIgnore
-    private Set<UsuarioGruposEntity> grupos = new HashSet<>();
+    private Set<GrupoEntity> grupos = new HashSet<>();
     
 }

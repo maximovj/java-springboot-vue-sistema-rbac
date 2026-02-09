@@ -67,22 +67,22 @@ public class UsuarioRolEntity {
     @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     @JsonIgnore
-    private List<UsuarioGruposEntity> grupos = new ArrayList<>();
+    private List<GrupoEntity> grupos = new ArrayList<>();
     
     // Método helper para añadir grupo
-    public void addGrupo(UsuarioGruposEntity grupo) {
+    public void addGrupo(GrupoEntity grupo) {
         grupos.add(grupo);
         grupo.setRol(this);
     }
 
-    public void removeGrupo(UsuarioGruposEntity grupo) {
+    public void removeGrupo(GrupoEntity grupo) {
         grupos.remove(grupo);
         grupo.setRol(null);  // Rompe la relación inversa
     }
 
     // Método para añadir múltiples grupos
-    public void addAllGrupos(List<UsuarioGruposEntity> grupos) {
-        for (UsuarioGruposEntity grupo : grupos) {
+    public void addAllGrupos(List<GrupoEntity> grupos) {
+        for (GrupoEntity grupo : grupos) {
             addGrupo(grupo);
         }
     }

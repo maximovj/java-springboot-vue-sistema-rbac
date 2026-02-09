@@ -41,7 +41,7 @@ public class UsuarioService {
             return ApiResponse.notFound(messageError, null);
         }
 
-        if(usuario.getGrupo().getUsuarioGrupoId() == 1L || usuario.getGrupo().getNombre() == "SUPER_ADMINISTRADOR" ) {
+        if(usuario.getGrupo().getGrupoId() == 1L || usuario.getGrupo().getNombre() == "SUPER_ADMINISTRADOR" ) {
             String messageError = "Entidad no se puede eliminar con usuario_id (%d)".formatted(usuario_id);
             return ApiResponse.notFound(messageError, null);
         }

@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.maximovj.rhhub_app.entity.PermisosEntity;
-import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.entity.UsuarioRolEntity;
 
 public record GrupoDTO(
@@ -15,12 +15,12 @@ public record GrupoDTO(
     UsuarioRolEntity rol,
     Set<PermisosEntity> permisos) {
 
-        public GrupoDTO(UsuarioGruposEntity e) {
-            this(e.getUsuarioGrupoId(), e.getNombre(), e.getDescripcion(), e.getEsActivo(), e.getRol(), e.getPermisos());
+        public GrupoDTO(GrupoEntity e) {
+            this(e.getGrupoId(), e.getNombre(), e.getDescripcion(), e.getEsActivo(), e.getRol(), e.getPermisos());
         }
 
-        public GrupoDTO(UsuarioGruposEntity e, UsuarioRolEntity rol, Set<PermisosEntity> permisos) {
-            this(e.getUsuarioGrupoId(), e.getNombre(), e.getDescripcion(), e.getEsActivo(), rol, permisos);
+        public GrupoDTO(GrupoEntity e, UsuarioRolEntity rol, Set<PermisosEntity> permisos) {
+            this(e.getGrupoId(), e.getNombre(), e.getDescripcion(), e.getEsActivo(), rol, permisos);
         }
     
 }

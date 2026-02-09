@@ -7,17 +7,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 
-public interface UsuarioGruposRepository extends JpaRepository<UsuarioGruposEntity, Long> {
+public interface GrupoRepository extends JpaRepository<GrupoEntity, Long> {
 
     boolean existsByNombre(String nombre);
 
-    Optional<UsuarioGruposEntity> findByNombre(String nombre);
+    Optional<GrupoEntity> findByNombre(String nombre);
 
     @EntityGraph(attributePaths = {"rol", "permisos"})
-    @Query("SELECT g FROM UsuarioGruposEntity g WHERE (:grupoId IS NOT NULL AND g.usuarioGrupoId = :grupoId)")
-    Optional<UsuarioGruposEntity> qBuscarPorIdRelaciones(
+    @Query("SELECT g FROM GrupoEntity g WHERE (:grupoId IS NOT NULL AND g.grupoId = :grupoId)")
+    Optional<GrupoEntity> qBuscarPorIdRelaciones(
         @Param("grupoId") Long grupoId
     );
 

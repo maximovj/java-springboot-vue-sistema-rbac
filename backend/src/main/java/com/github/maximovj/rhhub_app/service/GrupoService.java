@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.github.maximovj.rhhub_app.dto.request.GrupoRequest;
 import com.github.maximovj.rhhub_app.dto.response.ApiResponse;
-import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.mapper.GrupoMapper;
-import com.github.maximovj.rhhub_app.repository.UsuarioGruposRepository;
+import com.github.maximovj.rhhub_app.repository.GrupoRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class GrupoService {
 
-    private final UsuarioGruposRepository repo;
+    private final GrupoRepository repo;
 
     public ResponseEntity<?> verTodosGrupos() {
-        List<UsuarioGruposEntity> grupos =  this.repo.findAll();
+        List<GrupoEntity> grupos =  this.repo.findAll();
         return ApiResponse.ok("Lista de grupos", grupos);
     }
 
     public ResponseEntity<?> verGrupo(Long grupoId) {
         Objects.requireNonNull(grupoId);
-        UsuarioGruposEntity grupo =  this.repo.qBuscarPorIdRelaciones(grupoId).orElse(null);
+        GrupoEntity grupo =  this.repo.qBuscarPorIdRelaciones(grupoId).orElse(null);
 
         if(grupo == null) { 
             return ApiResponse.notFound("Entidad no encontrada", null);
@@ -41,7 +41,7 @@ public class GrupoService {
 
     public ResponseEntity<?> actualizarGrupo(Long grupoId, GrupoRequest req) {
         Objects.requireNonNull(grupoId);
-        UsuarioGruposEntity grupo =  this.repo.findById(grupoId).orElse(null);
+        GrupoEntity grupo =  this.repo.findById(grupoId).orElse(null);
 
         if(grupo == null) { 
             return ApiResponse.notFound("Entidad no encontrada", null);
@@ -59,7 +59,7 @@ public class GrupoService {
             grupo.setDescripcion(req.getDescripcion().trim());
         }
 
-        UsuarioGruposEntity updated = this.repo.save(grupo);
+        GrupoEntity updated = this.repo.save(grupo);
         return ApiResponse.ok("Entidad actualizada correctamente", updated);
     }
 
@@ -73,12 +73,12 @@ public class GrupoService {
                 return ApiResponse.conflict("El nombre de la entidad existe", null);
             }
             
-            UsuarioGruposEntity entidad = new UsuarioGruposEntity();
+            GrupoEntity entidad = new GrupoEntity();
             entidad.setNombre(req.getNombre());
             entidad.setDescripcion(req.getDescripcion());
             entidad.setEsActivo((req.getEsActivo() == null) ? true : req.getEsActivo());
 
-            UsuarioGruposEntity guardado = this.repo.save(entidad);
+            GrupoEntity guardado = this.repo.save(entidad);
             return ApiResponse.ok("Entidad creada correctamente", guardado);
         } catch (Exception e) {
             return ApiResponse.internalServerError(e.getMessage(), null);
@@ -88,7 +88,7 @@ public class GrupoService {
     public ResponseEntity<?> eliminarUnGrupo(Long grupoId)
     {
         Objects.requireNonNull(grupoId);
-        UsuarioGruposEntity grupo =  this.repo.findById(grupoId).orElse(null);
+        GrupoEntity grupo =  this.repo.findById(grupoId).orElse(null);
 
         if(grupo == null) { 
             return ApiResponse.notFound("Entidad no encontrada", null);

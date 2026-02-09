@@ -13,9 +13,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.github.maximovj.rhhub_app.config.properties.SeederProperties;
-import com.github.maximovj.rhhub_app.entity.UsuarioGruposEntity;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.entity.PermisosEntity;
-import com.github.maximovj.rhhub_app.repository.UsuarioGruposRepository;
+import com.github.maximovj.rhhub_app.repository.GrupoRepository;
 import com.github.maximovj.rhhub_app.repository.UsuarioPermisosRepository;
 
 import jakarta.transaction.Transactional;
@@ -23,10 +23,10 @@ import jakarta.transaction.Transactional;
 @Profile("seeder")
 @Component
 @Order(4)
-public class UsuarioGruposSeeder implements ApplicationRunner {
+public class GrupoSeeder implements ApplicationRunner {
 
     @Autowired
-    UsuarioGruposRepository gruposRepository;
+    GrupoRepository gruposRepository;
 
     @Autowired
     UsuarioPermisosRepository permisosRepository;
@@ -77,7 +77,7 @@ public class UsuarioGruposSeeder implements ApplicationRunner {
             String descripcion,
             Set<PermisosEntity> permisos
     ) {
-        UsuarioGruposEntity grupo = UsuarioGruposEntity.builder()
+        GrupoEntity grupo = GrupoEntity.builder()
                 .nombre(nombre)
                 .descripcion(descripcion)
                 .esActivo(true)

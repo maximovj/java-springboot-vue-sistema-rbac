@@ -73,9 +73,9 @@ public class UsuarioEntity {
 
     // Usuario pertenece a 1 grupo
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USUARIO_GRUPO_ID")
+    @JoinColumn(name = "GRUPO_ID")
     @JsonIgnore
-    private UsuarioGruposEntity grupo; 
+    private GrupoEntity grupo; 
 
     // Un usuario tiene un estado
     @ManyToOne(fetch = FetchType.LAZY)
