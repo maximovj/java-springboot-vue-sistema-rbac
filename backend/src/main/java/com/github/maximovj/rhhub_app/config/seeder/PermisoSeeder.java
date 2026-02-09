@@ -37,6 +37,7 @@ public class PermisoSeeder implements ApplicationRunner {
 		
         if(this.seederProperties.isEnabled() == false) return;
         
+        this.permisosModuloPermisos();
         this.permisosModuloUsuarios();
         this.permisosModuloRoles();
 	}
@@ -63,6 +64,19 @@ public class PermisoSeeder implements ApplicationRunner {
             }
         } catch (Exception e) {
             System.out.println("Hubo un error: " + e.getMessage());
+        }
+    }
+
+    private void permisosModuloPermisos() {
+        String[] permisosModuloPermisos = {
+            "VIEW_PERMISOS", 
+            "CREATE_PERMISOS", 
+            "READ_PERMISOS", 
+            "UPDATE_PERMISOS", 
+            "DELETE_PERMISOS"};
+
+        for (String string : permisosModuloPermisos) {
+            this.crearUnPermiso(string);
         }
     }
 
