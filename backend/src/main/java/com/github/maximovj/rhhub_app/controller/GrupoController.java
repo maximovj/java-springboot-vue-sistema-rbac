@@ -1,10 +1,11 @@
 package com.github.maximovj.rhhub_app.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.maximovj.rhhub_app.dto.request.GrupoRequest;
-import com.github.maximovj.rhhub_app.dto.response.ApiResponse;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.service.GrupoService;
 
 import jakarta.validation.Valid;
@@ -14,15 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
-
-
-
-
 
 @RestController
 @RequestMapping("/api/v1/grupos")
@@ -36,6 +33,16 @@ public class GrupoController {
     @GetMapping("")
     public ResponseEntity<?> getVerTodos() {
         return ResponseEntity.ok(this.service.verTodosGrupos());
+    }
+
+    // !! Buscar grupos
+    @GetMapping("/q/busqueda")
+    public ResponseEntity<?> getBusqueda(
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "10") Integer size,
+        @ModelAttribute GrupoEntity req
+    ) {
+        return this.service.busquedaX2(page, size, req);
     }
 
     // !! Ver un grupo por grupo_id

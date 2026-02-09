@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +16,10 @@ import com.github.maximovj.rhhub_app.dto.request.GrupoRequest;
 import com.github.maximovj.rhhub_app.dto.response.ApiResponse;
 import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.mapper.GrupoMapper;
+import com.github.maximovj.rhhub_app.projection.UsuarioProjection;
 import com.github.maximovj.rhhub_app.repository.GrupoRepository;
+import com.github.maximovj.rhhub_app.repository.specification.GrupoExtendsSpecification;
+import com.github.maximovj.rhhub_app.repository.specification.GrupoSpecification;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +30,53 @@ import lombok.extern.slf4j.Slf4j;
 public class GrupoService {
 
     private final GrupoRepository repo;
+
+    public Page<GrupoEntity> filtraGrupos(
+            Long grupoId,
+            String nombre,
+            String descripcion,
+            Boolean esActivo,
+            Pageable pageable
+    ) {
+        Specification<GrupoEntity> spec = Specification
+                .where(GrupoSpecification.conGrupoId(grupoId))
+                .and(GrupoSpecification.conNombre(nombre))
+                .and(GrupoSpecification.conDescripcion(descripcion))
+                .and(GrupoSpecification.conEsActivo(esActivo));
+
+        return this.repo.findAll(spec, pageable);
+    }
+
+    public ResponseEntity<?> busqueda(Integer page, Integer size, GrupoEntity e) {
+        ApiResponse<GrupoEntity> response = new ApiResponse<>();
+        Pageable pageable = PageRequest.of(
+            page, 
+            size, 
+            Sort.by("nombre").ascending());
+
+        Page<GrupoEntity> pageGrupo = this.filtraGrupos(
+                                        e.getGrupoId(), 
+                                        e.getNombre(), 
+                                        e.getDescripcion(), 
+                                        e.getEsActivo(), 
+                                        pageable);
+                                        
+        return response.okPage("Lista de usuarios", pageGrupo);
+    }
+
+    public ResponseEntity<?> busquedaX2(Integer page, Integer size, GrupoEntity e) {
+        ApiResponse<GrupoEntity> response = new ApiResponse<>();
+        Pageable pageable = PageRequest.of(
+            page, 
+            size, 
+            Sort.by("nombre").ascending());
+
+        Page<GrupoEntity> pageGrupo = this.repo.findAll(
+            new GrupoExtendsSpecification().filtroConEntidad(e), pageable
+        );
+                                        
+        return response.okPage("Lista de usuarios", pageGrupo);
+    }
 
     public ResponseEntity<?> verTodosGrupos() {
         List<GrupoEntity> grupos =  this.repo.findAll();
