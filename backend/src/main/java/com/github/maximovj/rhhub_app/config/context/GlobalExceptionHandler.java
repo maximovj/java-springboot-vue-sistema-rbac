@@ -55,7 +55,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleDataIntegrity(
             DataIntegrityViolationException ex) {
         List<ApiErrorDto> errores = new ArrayList<>();
-        errores.add(new ApiErrorDto("cause", ex.getCause()));
+        errores.add(new ApiErrorDto("cause", ex.getCause().getMessage()));
+        errores.add(new ApiErrorDto("specific_cause", ex.getMostSpecificCause().getMessage()));
         errores.add(new ApiErrorDto("message", ex.getMessage()));
 
         return ApiResponse.badRequest(
@@ -82,7 +83,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleMethodNotSupported(
             HttpRequestMethodNotSupportedException ex) {
         List<ApiErrorDto> errores = new ArrayList<>();
-        errores.add(new ApiErrorDto("cause", ex.getCause()));
+        errores.add(new ApiErrorDto("cause", ex.getCause().getMessage()));
         errores.add(new ApiErrorDto("message", ex.getMessage()));
 
         return ApiResponse.error(
@@ -98,7 +99,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleTypeMismatch(
             MethodArgumentTypeMismatchException ex) {
         List<ApiErrorDto> errores = new ArrayList<>();
-        errores.add(new ApiErrorDto("cause", ex.getCause()));
+        errores.add(new ApiErrorDto("cause", ex.getCause().getMessage()));
+        errores.add(new ApiErrorDto("specific_cause", ex.getMostSpecificCause().getMessage()));
         errores.add(new ApiErrorDto("message", ex.getMessage()));
         errores.add(new ApiErrorDto(ex.getName(), "Valor inválido: " + ex.getValue()));
 
@@ -114,7 +116,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleMissingRequestParam(
             MissingServletRequestParameterException ex) {
         List<ApiErrorDto> errores = new ArrayList<>();
-        errores.add(new ApiErrorDto("cause", ex.getCause()));
+        errores.add(new ApiErrorDto("cause", ex.getCause().getMessage()));
         errores.add(new ApiErrorDto("message", ex.getMessage()));
         errores.add(new ApiErrorDto(ex.getParameterName(), "El parámetro es obligatorio"));
 
@@ -147,7 +149,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleInvalidJson(
             HttpMessageNotReadableException ex) {
         List<ApiErrorDto> errores = new ArrayList<>();
-        errores.add(new ApiErrorDto("cause", ex.getCause()));
+        errores.add(new ApiErrorDto("cause", ex.getCause().getMessage()));
+        errores.add(new ApiErrorDto("specific_cause", ex.getMostSpecificCause().getMessage()));
         errores.add(new ApiErrorDto("message", ex.getMessage()));
 
         return ApiResponse.badRequest("El cuerpo de la petición tiene un JSON inválido", errores);
