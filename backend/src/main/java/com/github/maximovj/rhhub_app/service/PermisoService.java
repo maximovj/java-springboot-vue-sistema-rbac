@@ -41,12 +41,12 @@ public class PermisoService {
 
     public ResponseEntity<?> crearUnPermiso(PermisoRequest req) {
         try {
-            Objects.requireNonNull(req.getPermisoAccion(), "El campo accion es obligatoria");
-            Objects.requireNonNull(req.getPermisoModulo(), "El campo modulo es obligatoria");
+            Objects.requireNonNull(req.getAccion(), "El campo accion es obligatoria");
+            Objects.requireNonNull(req.getModulo(), "El campo modulo es obligatoria");
     
-            PermisoEntity permiso = this.repo.findByPermisoAccion(req.getPermisoAccion().trim()).orElse(null);
+            PermisoEntity permiso = this.repo.findByAccion(req.getAccion().trim()).orElse(null);
             if(permiso != null) {
-                String messageError = "La entidad %s existe".formatted(req.getPermisoAccion());
+                String messageError = "La entidad %s existe".formatted(req.getAccion());
                 return ApiResponse.conflict(messageError, null);
             }
 
@@ -65,26 +65,26 @@ public class PermisoService {
     public ResponseEntity<?> actualizarUnPermiso(Long permisoId, PermisoRequest req) {
         try {
             Objects.requireNonNull(permisoId, "El campo permiso_id es obligatoria");
-            Objects.requireNonNull(req.getPermisoAccion(), "El campo accion es obligatoria");
-            Objects.requireNonNull(req.getPermisoModulo(), "El campo modulo es obligatoria");
+            Objects.requireNonNull(req.getAccion(), "El campo accion es obligatoria");
+            Objects.requireNonNull(req.getModulo(), "El campo modulo es obligatoria");
     
             PermisoEntity entidad = this.repo.findById(permisoId).orElse(null);
             if(entidad == null) {
                 return ApiResponse.badRequest("La entidad no fue localizada", null);
             }
 
-            if(this.repo.existsByPermisoAccion(req.getPermisoAccion().trim()) 
-                && !entidad.getPermisoAccion().trim().equals(req.getPermisoAccion().trim())) {
-                String messageError = "La entidad con accion %s existe".formatted(req.getPermisoAccion());
+            if(this.repo.existsByAccion(req.getAccion().trim()) 
+                && !entidad.getAccion().trim().equals(req.getAccion().trim())) {
+                String messageError = "La entidad con accion %s existe".formatted(req.getAccion());
                 return ApiResponse.conflict(messageError, null);
             }
 
-            if(req.getPermisoAccion() != null && !req.getPermisoAccion().isBlank()) {
-                entidad.setPermisoAccion(req.getPermisoAccion().trim());
+            if(req.getAccion() != null && !req.getAccion().isBlank()) {
+                entidad.setAccion(req.getAccion().trim());
             }
 
-            if(req.getPermisoAccion() != null && !req.getPermisoAccion().isBlank()) {
-                entidad.setPermisoModulo(req.getPermisoModulo().trim());
+            if(req.getAccion() != null && !req.getAccion().isBlank()) {
+                entidad.setModulo(req.getModulo().trim());
             }
 
             PermisoEntity modificado = this.repo.save(entidad);

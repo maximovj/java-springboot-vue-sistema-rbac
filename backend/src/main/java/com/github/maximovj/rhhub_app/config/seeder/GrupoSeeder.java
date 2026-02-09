@@ -50,7 +50,7 @@ public class GrupoSeeder implements ApplicationRunner {
 
         if (!gruposRepository.existsByNombre("MOD_USUARIOS")) {
             Set<PermisoEntity> permisos = new HashSet<>(
-                permisosRepository.findByPermisoAccionIn(
+                permisosRepository.findByAccionIn(
                     List.of("VIEW_USUARIOS", "UPDATE_USUARIOS")
                 )
             );

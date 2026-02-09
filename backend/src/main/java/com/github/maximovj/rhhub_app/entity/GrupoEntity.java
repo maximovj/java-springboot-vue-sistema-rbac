@@ -123,7 +123,7 @@ public class GrupoEntity {
     // Método para verificar si tiene un permiso específico
     public boolean tienePermiso(String permisoAccion) {
         return permisos.stream()
-            .anyMatch(permiso -> permiso.getPermisoAccion().equals(permisoAccion));
+            .anyMatch(permiso -> permiso.getAccion().equals(permisoAccion));
     }
     
     // Método estático para builder

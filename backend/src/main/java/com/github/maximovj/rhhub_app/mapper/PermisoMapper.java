@@ -20,8 +20,8 @@ public class PermisoMapper {
     public static Optional<PermisoEntity> toEntity(PermisoRequest req) {
         return Optional.of(new PermisoEntity(
             req.getPermisoId(), 
-            req.getPermisoAccion(), 
-            req.getPermisoModulo(),
+            req.getAccion(), 
+            req.getModulo(),
             Set.of()
         ));
     }

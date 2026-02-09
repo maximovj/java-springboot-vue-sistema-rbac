@@ -50,13 +50,13 @@ public class PermisoEntity {
     @JsonProperty("permiso_id")
     private Long permisoId;
 
-    @Column(name = "PERMISO_ACCION", nullable = false, unique = true)
-    @JsonProperty("permiso_accion")
-    private String permisoAccion;
+    @Column(name = "ACCION", nullable = false, unique = true)
+    @JsonProperty("accion")
+    private String accion;
 
-    @Column(name = "PERMISO_MODULO", nullable = false, unique = false)
-    @JsonProperty("permiso_modulo")
-    private String permisoModulo;
+    @Column(name = "MODULO", nullable = false, unique = false)
+    @JsonProperty("modulo")
+    private String modulo;
 
     // !! RELACIONES CORREGIDAS
 

@@ -13,11 +13,11 @@ public record PermisoDTO(
     Set<GrupoEntity> grupos) {
 
         public PermisoDTO(PermisoEntity e) {
-            this(e.getPermisoId(), e.getPermisoAccion(), e.getPermisoModulo(), e.getGrupos());
+            this(e.getPermisoId(), e.getAccion(), e.getModulo(), e.getGrupos());
         }
 
         public PermisoDTO(PermisoEntity e, Set<GrupoEntity> grupos) {
-            this(e.getPermisoId(), e.getPermisoAccion(), e.getPermisoModulo(), grupos);
+            this(e.getPermisoId(), e.getAccion(), e.getModulo(), grupos);
         }
     
 }

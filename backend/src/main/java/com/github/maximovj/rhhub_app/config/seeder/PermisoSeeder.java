@@ -46,15 +46,15 @@ public class PermisoSeeder implements ApplicationRunner {
     @Transactional
     private void crearUnPermiso(String strPermiso, String strModulo) {
         try {
-            if(!repository.existsByPermisoAccion(strPermiso)) {
+            if(!repository.existsByAccion(strPermiso)) {
                 Optional<UsuarioPermisoEstadoEntity> estado = usuarioPermisoEstadoRepository.findByEstado("ACTIVO");
                 if(estado.isPresent()) {
                     UsuarioPermisoEstadoEntity estado_activo = estado.get();
 
                     // Crear el objeto de manera más explícita
                     PermisoEntity permiso = PermisoEntity.builder()
-                    .permisoAccion(strPermiso)
-                    .permisoModulo(strModulo)
+                    .accion(strPermiso)
+                    .modulo(strModulo)
                     .build();
 
                     if(permiso != null) {

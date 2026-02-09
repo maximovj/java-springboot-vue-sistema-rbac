@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface PermisoRepository extends JpaRepository<PermisoEntity, Long> {
 
-    boolean existsByPermisoAccion(String permisoAccion);
+    boolean existsByAccion(String accion);
 
     @EntityGraph(attributePaths = {"grupos"})
     @Query("SELECT p FROM PermisoEntity p WHERE (:permisoId IS NOT NULL AND p.permisoId = :permisoId)")
@@ -23,12 +23,12 @@ public interface PermisoRepository extends JpaRepository<PermisoEntity, Long> {
         @Param("permisoId") Long permisoId
     );
 
-    Optional<PermisoEntity> findByPermisoAccion(String permisoAccion);
+    Optional<PermisoEntity> findByAccion(String accion);
 
-    List<PermisoEntity> findByPermisoModulo(String permisoModulo);
+    List<PermisoEntity> findByModulo(String modulo);
 
-    List<PermisoEntity> findByPermisoAccionIn(Collection<String> permisoAccion);
+    List<PermisoEntity> findByAccionIn(Collection<String> accion);
 
-    List<PermisoEntity> findByPermisoModuloIn(Collection<String> permisoModulo);
+    List<PermisoEntity> findByModuloIn(Collection<String> modulo);
 
 }

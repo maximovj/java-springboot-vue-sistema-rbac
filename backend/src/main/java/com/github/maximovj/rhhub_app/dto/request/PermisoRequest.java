@@ -24,13 +24,13 @@ public class PermisoRequest {
     @Pattern(regexp = "^[a-zA-Z_]+$", 
     message = "El campo accion solo puede contener letras y guion bajo")
     @JsonProperty(value = "accion")
-    private String permisoAccion;
+    private String accion;
 
     @NotBlank(message = "El campo modulo es obligatoria")
     @Size(min = 3, max = 20, message = "El campo modulo debe tener entre 3 y 20 caracteres")
     @Pattern(regexp = "^[a-zA-Z_]+$", 
     message = "El campo modulo solo puede contener letras y guion bajo")
     @JsonProperty(value = "modulo")
-    private String permisoModulo;
+    private String modulo;
 
 }
