@@ -4,6 +4,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class BaseSpecification<T> {
 
+    protected Specification<T> spec = Specification.where(null);
+
     protected Specification<T> equalsSpec(String field, Object value) {
         return (root, query, cb) ->
                 value == null ? null : cb.equal(root.get(field), value);

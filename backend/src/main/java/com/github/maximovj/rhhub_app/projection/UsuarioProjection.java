@@ -1,6 +1,7 @@
 package com.github.maximovj.rhhub_app.projection;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.maximovj.rhhub_app.entity.UsuarioEntity;
 
 public interface UsuarioProjection {
     
@@ -15,5 +16,14 @@ public interface UsuarioProjection {
     
     @JsonProperty("es_activo")
     Boolean getEsActivo();
+
+    static UsuarioProjection fromEntity(UsuarioEntity e) {
+        return new UsuarioProjection() {
+            public Long getUsuarioId() { return e.getUsuarioId(); }
+            public String getUsuario() { return e.getUsuario(); }
+            public String getCorreo() { return e.getCorreo(); }
+            public Boolean getEsActivo() { return e.getEsActivo(); }
+        };
+    }
     
 }

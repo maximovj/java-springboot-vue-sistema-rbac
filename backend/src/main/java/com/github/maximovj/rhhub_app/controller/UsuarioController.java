@@ -3,10 +3,14 @@ package com.github.maximovj.rhhub_app.controller;
 import com.github.maximovj.rhhub_app.dto.records.UsuarioDTO;
 import com.github.maximovj.rhhub_app.dto.request.UsuarioRequest;
 import com.github.maximovj.rhhub_app.dto.response.ApiResponse;
+import com.github.maximovj.rhhub_app.entity.GrupoEntity;
 import com.github.maximovj.rhhub_app.entity.UsuarioEntity;
 import com.github.maximovj.rhhub_app.exception.BusinessException;
 import com.github.maximovj.rhhub_app.exception.ResourceNotFoundException;
 import com.github.maximovj.rhhub_app.mapper.UsuarioMapper;
+import com.github.maximovj.rhhub_app.projection.UsuarioProjection;
+import com.github.maximovj.rhhub_app.repository.specification.UsuarioSpecBuilder;
+import com.github.maximovj.rhhub_app.repository.specification.UsuarioSpecification;
 import com.github.maximovj.rhhub_app.service.UsuarioService;
 
 import jakarta.validation.Valid;
@@ -26,6 +30,10 @@ import java.util.Optional;
 
 import javax.naming.NotContextException;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,29 +49,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UsuarioController {
 
     private final PasswordEncoder passwordEncoder;
-
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<?> listar() {
-        return ApiResponse.ok(
-            "Lista de usuarios",
-            usuarioService.findAll().stream()
-                .map(UsuarioMapper::toDTOBasic)
-                .toList()
-        );
+    public ResponseEntity<?> getListarUsuarios(
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "10") Integer size
+    ) {
+        ApiResponse<UsuarioProjection> response = new ApiResponse<>();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("usuario").ascending());
+        return response.okPage("Filtro de usuarios", this.usuarioService.listarUsuarios(pageable));
     }
 
-    /*
-    @GetMapping("/q/busqueda")
-    public ResponseEntity<?> getBusqueda(
+    @GetMapping("/q/buscar")
+    public ResponseEntity<?> getBuscarUsuarios(
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "10") Integer size,
         @ModelAttribute UsuarioRequest req
     ) {
-        return this.usuarioService.respBusqueda(page, size, req);
+        ApiResponse<UsuarioProjection> response = new ApiResponse<>();
+        Specification<UsuarioEntity> spec = new UsuarioSpecBuilder()
+                                            .usuarioId(req.getUsuario_id())
+                                            .usuario(req.getUsuario())
+                                            .correo(req.getCorreo())
+                                            .esActivo(req.getEs_activo())
+                                            .build();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("usuario").ascending());
+        return response.okPage("Filtro de usuarios", this.usuarioService.buscarUsuarios(spec, pageable));
     }
-    */
 
     @PutMapping("/{id}")
     public ResponseEntity<?> putActualizarUsuario(

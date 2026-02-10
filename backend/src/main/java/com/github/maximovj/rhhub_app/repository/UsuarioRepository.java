@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,17 +16,32 @@ import com.github.maximovj.rhhub_app.service.integration.JpaBaseRepository;
 
 public interface UsuarioRepository extends JpaBaseRepository<UsuarioEntity, Long> {
 
+    default Page<UsuarioProjection> qBuscarUsuarios(
+            Specification<UsuarioEntity> spec,
+            Pageable pageable
+    ) {
+        return findAll(spec, pageable)
+                .map(UsuarioProjection::fromEntity);
+    }
+    
+    @Query("""
+        SELECT u FROM UsuarioEntity u
+    """)
+    Page<UsuarioProjection> qMostrarUsuarios(
+        Pageable pageable
+    );
+
     @Query("""
         SELECT u FROM UsuarioEntity u
         WHERE (:usuario IS NULL OR u.usuario LIKE %:usuario%)
         AND (:correo IS NULL OR u.correo LIKE %:correo%)   
     """)
-    Page<UsuarioProjection> buscarUsuarios(
+    Page<UsuarioProjection> qFiltrarUsuarios(
         @Param("usuario") String usuario,
         @Param("correo") String correo,
         Pageable pageable
     );
-
+    
     boolean existsByUsuario(String usuario);
 
     boolean existsByUsuarioOrCorreo(String usuario, String correo);

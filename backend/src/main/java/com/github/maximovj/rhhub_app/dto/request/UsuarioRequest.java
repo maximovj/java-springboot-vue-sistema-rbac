@@ -6,13 +6,20 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @Builder
 public class UsuarioRequest {
+
+    @PositiveOrZero(message = "El campo usuario_id deber un numéro positivo")
+    @JsonProperty(value = "usuario_id", required = false, defaultValue = "null")
+    @Builder.Default
+    private Long usuario_id = null;
 
     @NotBlank(message = "El usuario es obligatorio")
     @Size(min = 3, max = 50, message = "El usuario debe tener entre 3 y 50 caracteres")
@@ -41,5 +48,5 @@ public class UsuarioRequest {
     @JsonProperty(value = "es_activo", required = false, defaultValue = "false")
     @Builder.Default
     private Boolean es_activo = false;
-    
+
 }

@@ -34,7 +34,7 @@ public class UsuarioDao {
             size, 
             Sort.by("usuario").ascending());
 
-        Page<UsuarioProjection> lstUsuarios = this.usuarioRepository.buscarUsuarios(null, null, pageable);
+        Page<UsuarioProjection> lstUsuarios = this.usuarioRepository.qFiltrarUsuarios(null, null, pageable);
         return lstUsuarios;
     }
 
