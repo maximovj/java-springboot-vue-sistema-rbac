@@ -20,5 +20,9 @@ public class BaseSpecification<T> {
                             "%" + value.toLowerCase() + "%"
                         );
     }
+
+    public Specification<T> build(){ 
+        return spec;
+    }
     
 }

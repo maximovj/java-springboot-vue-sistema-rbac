@@ -5,18 +5,18 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.maximovj.rhhub_app.exception.ResourceNotFoundException;
 
-import jakarta.transaction.Transactional;
 
-@Transactional
+@Transactional(readOnly = true)
 public abstract class BaseServiceImpl<E, ID, R extends JpaBaseRepository<E, ID>>
         implements BaseService<E, ID> {
 
     protected final R jpaBaseRepository;
 
-    protected BaseServiceImpl(R jpaBaseRepository) {
+    public BaseServiceImpl(R jpaBaseRepository) {
         this.jpaBaseRepository = jpaBaseRepository;
     }
 
@@ -33,11 +33,13 @@ public abstract class BaseServiceImpl<E, ID, R extends JpaBaseRepository<E, ID>>
     }
 
     @Override
+    @Transactional
     public E create(E entity) {
         return this.jpaBaseRepository.save(entity);
     }
 
     @Override
+    @Transactional
     public E update(ID id, E entity) {
         if (!this.jpaBaseRepository.existsById(id)) {
             throw new ResourceNotFoundException("Entidad no encontrada");
@@ -46,6 +48,7 @@ public abstract class BaseServiceImpl<E, ID, R extends JpaBaseRepository<E, ID>>
     }
 
     @Override
+    @Transactional
     public void delete(ID id) {
         if (!this.jpaBaseRepository.existsById(id)) {
             throw new ResourceNotFoundException("Entidad no encontrada");
@@ -64,4 +67,3 @@ public abstract class BaseServiceImpl<E, ID, R extends JpaBaseRepository<E, ID>>
     }
     
 }
-
