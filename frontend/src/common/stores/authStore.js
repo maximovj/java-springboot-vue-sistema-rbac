@@ -6,6 +6,7 @@ import autenticacionService from '../services/autenticacion.service';
 
 import { scopedLogger } from '../utils/loggerUtils';
 const logger = scopedLogger("authStore.js");
+let initPromise = null;
 
 export const useAuthStore = defineStore('auth', { 
   state: () => ({
@@ -47,43 +48,57 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async init(msg = 'authStore.js :: linea 19') {
-      logger.info("init", {msg});
+    async init(msg = 'authStore.js :: init') {
+      logger.info("init", { msg });
 
       const settings = useSettingsStore();
-      if(this.inicializado && settings.recuerdame) return;
-      
-      try {
-        if(settings.recuerdame || settings.usuario) {
-          const renovarToken = await autenticacionService.refresh();
-          logger.info("init", "renovarToken", renovarToken);
-          
-          
-          if(renovarToken.status == 200) {
-            const { contenido } = renovarToken.data;
-            
-            this.loguearse(
-              contenido?.acceso_token,
-              contenido?.info_usuario
-            );
 
-            settings.recuerdame = true;
+      // Si ya terminó correctamente, no repetir
+      if (this.inicializado) return;
+
+      // Si ya está ejecutándose, devolver la misma promesa
+      if (initPromise) {
+        return initPromise;
+      }
+
+      initPromise = (async () => {
+        try {
+
+          if (settings.recuerdame || settings.usuario) {
+            const renovarToken = await autenticacionService.refresh();
+            logger.info("init", "renovarToken", renovarToken);
+
+            if (renovarToken.status == 200) {
+              const { contenido } = renovarToken.data;
+
+              this.loguearse(
+                contenido?.acceso_token,
+                contenido?.info_usuario
+              );
+
+              settings.recuerdame = true;
+            }
           }
 
-        }
-      } catch (e) {
-        logger.error("init::catch", {e});
-        await autenticacionService.logout();
-        const alert = useAlertStore();
-        await alert.alert({
-          title: 'AVISO',
-          message: 'Desloguerse (p. 1)',
-        });
-      } finally {
-        this.inicializado = true;
-      }
-    },
+        } catch (e) {
+          logger.error("init::catch", { e });
 
+          await autenticacionService.logout();
+
+          const alert = useAlertStore();
+          await alert.alert({
+            title: 'AVISO',
+            message: 'Desloguerse (p. 1)',
+          });
+
+        } finally {
+          this.inicializado = true;
+          initPromise = null; // liberar
+        }
+      })();
+
+      return initPromise;
+    },
     loguearse(acceso_token, usuario_info) {
       const settings = useSettingsStore();
       settings.recuerdame = usuario_info?.recuerdame;

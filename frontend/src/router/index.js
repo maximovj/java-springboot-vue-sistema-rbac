@@ -36,51 +36,49 @@ const router = createRouter({
       component: () => import('@/views/ConfiguracionView.vue'),
       meta: { requiresAuth: true }
     },
-    { path: '/:pathMatch(.*)*', redirect: '/acceder'},
+    { 
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/Error404.vue')
+    },
   ],
-})
+});
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const auth = useAuthStore();
 
-  // 1. Inicializar auth una sola vez
   if (!auth.inicializado) {
     try {
-      await auth.init("router>index.js::beforeEach : Inicializar datos...");
-    } catch (error) {
-      logger.error("router.beforeEach::catch", 'Error inicializando autenticación:', error);
+      await auth.init("router>index.js::beforeEach");
     } finally {
-      auth.inicializado = true
+      auth.inicializado = true;
     }
   }
 
-  if(auth.esSuperAdministrador == false) {
-    // 2. Rutas que requieren autenticación
-    if (to.meta.requiresAuth && !auth.estaAutenticado) {
-      return next({ name: 'acceder' })
-    }
-
-    // 3. Rutas solo para invitados
-    if (to.meta.requiresGuest && auth.estaAutenticado) {
-      return next({ name: 'panel' })
-    }
-
-    // 4. 🔐 Validación de permisos (NUEVO)
-    if (to.meta.modulo && to.meta.permiso) {
-      // Seguridad extra por si permisos aún no existen
-      if (!auth.hasPermiso || !auth.hasPermiso(to.meta.modulo, to.meta.permiso)) {
-        const customAlert = useAlertStore();
-        await customAlert.alert({
-          title: 'ACCESO NO AUTORIZADO',
-          message: 'No tiene permiso suficiente',
-        }); 
-        return next({ name: 'panel' }) // o 403 si prefieres
-      }
-    }
+  if (to.name === 'not-found') {
+    return auth.estaAutenticado
+      ? { name: 'panel' }
+      : { name: 'acceder' }
   }
 
-  next()
-})
+  if (to.meta.requiresAuth && !auth.estaAutenticado) {
+    return { name: 'acceder' }
+  }
 
+  if (to.meta.requiresGuest && auth.estaAutenticado) {
+    return { name: 'panel' }
+  }
+
+  if (!auth.esSuperAdministrador && to.meta.modulo && to.meta.permiso) {
+    if (!auth.hasPermiso?.(to.meta.modulo, to.meta.permiso)) {
+      const customAlert = useAlertStore();
+      await customAlert.alert({
+        title: 'ACCESO NO AUTORIZADO',
+        message: 'No tiene permiso suficiente',
+      });
+      return { name: 'panel' }
+    }
+  }
+});
 
 export default router
