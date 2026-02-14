@@ -110,6 +110,7 @@ const salir =  async () =>  {
                     class="w-full flex items-center gap-3 px-4 py-2 text-sm
                         hover:bg-gray-100 dark:hover:bg-gray-700
                         transition-colors"
+                    @click="$router.push('/configuracion')"
                 >
                     <i class="pi pi-cog text-gray-500"></i>
                     Configuración
@@ -163,15 +164,14 @@ const salir =  async () =>  {
         />
         </RouterLink>
 
-        <RouterLink to="/configuracion">
+        <RouterLink to="/permisos">
         <Button
-            icon="pi pi-cog"
+            icon="pi pi-unlock"
             class="p-button-text p-button-rounded"
-            :class="isActive('/configuracion')"
-            v-tooltip.bottom="'Configuración'"
+            :class="isActive('/permisos')"
+            v-tooltip.bottom="'permisos'"
         />
         </RouterLink>
-
     </div>
     </div>
 </transition>

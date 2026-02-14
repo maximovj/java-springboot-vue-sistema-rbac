@@ -31,6 +31,12 @@ const router = createRouter({
       meta: { requiresAuth: true, modulo: MODULOS.USUARIOS, permiso: PERMISOS.USUARIOS.VIEW }
     },
     {
+      path: '/permisos',
+      name: 'permisos',
+      component: () => import('@/views/PermisosView.vue'),
+      meta: { requiresAuth: true, modulo: MODULOS.PERMISOS, permiso: PERMISOS.PERMISOS.VIEW }
+    },
+    {
       path: '/configuracion',
       name: 'configuracion',
       component: () => import('@/views/ConfiguracionView.vue'),

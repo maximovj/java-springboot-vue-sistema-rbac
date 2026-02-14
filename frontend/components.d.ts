@@ -12,18 +12,22 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Avatar: typeof import('primevue/avatar')['default']
+    Badge: typeof import('primevue/badge')['default']
     Button: typeof import('primevue/button')['default']
     CabeceraPorDefecto: typeof import('./src/components/lazy/CabeceraPorDefecto.vue')['default']
     Card: typeof import('primevue/card')['default']
     CellAccionesUsuario: typeof import('./src/components/lazy/usuarios/CellAccionesUsuario.vue')['default']
     CellActivoUsuario: typeof import('./src/components/lazy/usuarios/CellActivoUsuario.vue')['default']
+    Chip: typeof import('primevue/chip')['default']
     Column: typeof import('primevue/column')['default']
     ConfirmDialog: typeof import('primevue/confirmdialog')['default']
     ContenidoPorDefecto: typeof import('./src/components/lazy/ContenidoPorDefecto.vue')['default']
     DataTable: typeof import('primevue/datatable')['default']
+    DatePicker: typeof import('primevue/datepicker')['default']
     Dialog: typeof import('primevue/dialog')['default']
     Divider: typeof import('primevue/divider')['default']
     EditarUsuarios: typeof import('./src/components/usuarios/EditarUsuarios.vue')['default']
+    FloatLabel: typeof import('primevue/floatlabel')['default']
     InfoUsuario: typeof import('./src/components/usuarios/InfoUsuario.vue')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Menu: typeof import('primevue/menu')['default']
@@ -40,7 +44,9 @@ declare module 'vue' {
     TablaUsuarios: typeof import('./src/components/usuarios/TablaUsuarios.vue')['default']
     TabPanel: typeof import('primevue/tabpanel')['default']
     TabView: typeof import('primevue/tabview')['default']
+    Tag: typeof import('primevue/tag')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
+    Toolbar: typeof import('primevue/toolbar')['default']
   }
   export interface GlobalDirectives {
     Tooltip: typeof import('primevue/tooltip')['default']
