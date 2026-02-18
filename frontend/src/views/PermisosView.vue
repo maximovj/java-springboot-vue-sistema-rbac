@@ -3,172 +3,38 @@
   <div class="card">
 
     <!-- Header -->
-    <CustomHeaderPagina
+    <CrudHeader
       title="Gestión de Permisos"
       subtitle="Resumen general de la información"
-    >
-      <template #actions>
-        <Button label="Nuevo" icon="pi pi-plus" />
-        <Button icon="pi pi-refresh" @click="aplicarBusqueda" outlined />
-        <!-- Botón menú -->
-          <Button
-          icon="pi pi-ellipsis-v"
-          class="p-button-sm p-button-text"
-          @click="toggleMenu"
-          aria-haspopup="true"
-          aria-controls="menu_header"
-          />
-
-          <!-- Popup Menu -->
-          <Menu
-          id="menu_header"
-          ref="menu"
-          :model="menuItems"
-          popup
-          />
-      </template>
-    </CustomHeaderPagina>
+      :menu-items="menuItems"
+      @create="crearPermiso"
+      @refresh="aplicarBusqueda"
+    />
 
     <!-- 🔎 Barra de filtros - Expandible -->
-    <CustomCardFiltros v-model="filtersVisible" :filters="activeFilters">
-      <template #title>
-        <i class="pi pi-filter  text-primary" />
-        <h4 class="text-sm font-medium">Filtros de búsqueda</h4>
-      </template>
-
-      <form @submit.prevent="aplicarBusqueda">
-          <div v-if="filtersVisible" class="flex flex-col gap-4">
-            <!-- Filtros -->
-            
-              <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                
-                <span class="p-input-icon-left w-full">
-                  <span><i class="pi pi-search" /> <span class="font-bold text-sm">Acción</span></span>
-                  <InputText
-                    v-model="searchForm.accion"
-                    placeholder="Buscar por acción..."
-                    class="w-full"
-                  />
-                </span>
-
-                <span class="p-input-icon-left w-full">
-                  <span><i class="pi pi-box" /> <span class="font-bold text-sm">Módulo</span></span>
-                  <InputText
-                    v-model="searchForm.modulo"
-                    placeholder="Buscar por módulo..."
-                    class="w-full"
-                  />
-                </span>
-
-                <span class="p-input-icon-left w-full">
-                  <span><i class="pi pi-filter" /> <span class="font-bold text-sm">Estado</span></span>
-                  <Select
-                    v-model="searchForm.es_activo"
-                    :options="estados"
-                    option-label="label"
-                    option-value="value"
-                    placeholder="Seleccionar estado..."
-                    class="w-full"
-                  />
-                </span>
-
-                <span class="w-full">
-                  <span>
-                    <i class="pi pi-calendar" />
-                    <span class="font-bold text-sm">Fecha creación (Rango)</span>
-                  </span>
-
-                  <DatePicker
-                    v-model="searchForm.fecha_creacion"
-                    selectionMode="range"
-                    dateFormat="yy-mm-dd"
-                    showIcon
-                    class="w-full"
-                  />
-                </span>
-               
-              </div>
-
-            <!-- Acciones -->
-            <div class="flex justify-between items-center">
-              <Button
-                label="Limpiar todo"
-                icon="pi pi-filter-slash"
-                severity="secondary"
-                text
-                size="small"
-                @click="clearFilters"
-              />
-
-              <!-- Badges de filtros activos (interactivos) -->
-              <CustomFiltrosActivos :filters="activeFilters" />
-
-              <div class="flex gap-2">
-                <Button
-                  label="Buscar"
-                  icon="pi pi-search"
-                  severity="secondary"
-                  size="small"
-                  type="submit"
-                />
-              </div>
-            </div>
-          </div>
-      </form>
-    </CustomCardFiltros> 
+    <FiltrosPermisos
+      v-model="searchForm"
+      :loading="cargandoRegistros"
+      :visible="filtersVisible"
+      :estados="estados"
+      :active-filters="activeFilters"
+      @update:visible="filtersVisible = $event"
+      @search="aplicarBusqueda"
+      @clear="clearFilters"
+    />
 
     <!-- 📋 Tabla -->
-    <GenericDataTable
-       :value="permisos"
-        :filters="filters"
-        v-model:rows="dataTableRows"
-        :loading="cargandoRegistros"
-        :totalRecords="totalRecords"
-        :first="first"
-        @page="onPage"
-    >
-      <Column field="permiso_id" header="ID" sortable style="width: 80px" />
-      <Column field="accion" header="Accion" sortable />
-      <Column field="modulo" header="Módulo" sortable />
-      <Column field="es_activo" header="Estado" style="width: 120px">
-        <template #body="{ data }">
-          <Tag :value="getEstadoLabel(data.es_activo)" :severity="getEstadoSeverity(data.es_activo)" />
-        </template>
-      </Column>
-      <Column field="creado_en" header="Creación" style="width: 150px">
-        <template #body="{ data }">
-          {{ formatDate(new Date(data.creado_en)) }}
-        </template>
-      </Column>
-      <Column field="actualizado_en" header="Actualización" style="width: 150px">
-        <template #body="{ data }">
-          {{ formatDate(new Date(data.actualizado_en)) }}
-        </template>
-      </Column>
-      <Column header="Acciones" style="width: 180px">
-        <template #body="{ data }">
-          <div class="flex gap-2">
-            <!-- Editar -->
-            <Button
-              icon="pi pi-pencil"
-              severity="warning"
-              rounded
-              text
-              @click="editarPermiso(data)"
-            />
-
-            <!-- Eliminar -->
-            <Button
-              icon="pi pi-trash"
-              severity="danger"
-              rounded
-              text
-              @click="eliminarPermiso(data)"
-            />
-          </div>
-        </template>
-      </Column>
-    </GenericDataTable>
+    <TablaPermisos
+      :value="permisos"
+      :filters="filters"
+      :rows="dataTableRows"
+      :loading="cargandoRegistros"
+      :total-records="totalRecords"
+      :first="first"
+      @page="onPage"
+      @edit="editarPermiso"
+      @delete="eliminarPermiso"
+    />
     
   </div>
   </PlantillaBase>
@@ -191,8 +57,6 @@ import { scopedLogger } from '@/common/utils/loggerUtils'
 const logger = scopedLogger('PermisosView.vue');
 
 export default {
-  name: 'GestionPermisos',
-
   components: {
     DataTable,
     Column,
@@ -225,7 +89,7 @@ export default {
         fecha_creacion: [fechaInicio, fechaFin],
       },
 
-      filtersVisible: false,
+      filtersVisible: true,
 
       filters: {
         accion: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -297,17 +161,20 @@ export default {
     },
 
     aplicarBusqueda() {
+      this.filtersVisible = false
       this.page = 0
       this.first = 0
 
       this.filters.accion.value = this.searchForm.accion
       this.filters.modulo.value = this.searchForm.modulo
       this.filters.es_activo.value = this.searchForm.es_activo
-        if (this.searchForm.fecha_creacion && this.searchForm.fecha_creacion.length === 2) {
-          this.filters.fecha_creacion.value = this.searchForm.fecha_creacion
-        } else {
-          this.filters.fecha_creacion.value = null
-        }
+
+      // Para el filtro de fecha, verificamos que haya un rango válido
+      if (this.searchForm.fecha_creacion && this.searchForm.fecha_creacion.length === 2) {
+        this.filters.fecha_creacion.value = this.searchForm.fecha_creacion
+      } else {
+        this.filters.fecha_creacion.value = null
+      }
 
       this.cargarPermisos()
     },
@@ -318,7 +185,7 @@ export default {
         modulo: null,
         es_activo: null,
       }
-      this.aplicarBusqueda()
+      //this.aplicarBusqueda()
     },
 
     getEstadoSeverity(value) {
@@ -391,18 +258,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.card {
-  padding: 1.5rem;
-}
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-.p-chip {
-  font-size: 0.75rem;
-}
-</style>
