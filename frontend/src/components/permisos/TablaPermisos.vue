@@ -11,6 +11,7 @@
     <Column field="permiso_id" header="ID" sortable style="width: 80px" />
 
     <Column field="accion" header="Acción" sortable />
+    
     <Column field="modulo" header="Módulo" sortable />
 
     <Column field="es_activo" header="Estado" style="width: 120px">
@@ -37,13 +38,8 @@
     <Column header="Acciones" style="width: 180px">
       <template #body="{ data }">
         <div class="flex gap-2">
-          <Button
-            icon="pi pi-pencil"
-            severity="warning"
-            rounded
-            text
-            @click="$emit('edit', data)"
-          />
+          <EditarPermiso :permiso="data" @guardar="mtdEmitirActualizar" />
+          
           <Button
             icon="pi pi-trash"
             severity="danger"
@@ -80,7 +76,7 @@ export default {
     first: Number
   },
 
-  emits: ['page', 'edit', 'delete'],
+  emits: ['page', 'actualizar', 'delete'],
 
   methods: {
     formatDate(date) {
@@ -93,6 +89,10 @@ export default {
 
     estadoSeverity(value) {
       return value ? 'success' : 'danger'
+    },
+
+    mtdEmitirActualizar(args) {
+      this.$emit('actualizar', args);
     }
   }
 }

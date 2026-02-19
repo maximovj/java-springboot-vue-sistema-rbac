@@ -3,13 +3,34 @@
   <div class="card">
 
     <!-- Header -->
-    <CrudHeader
+    <CustomHeaderPagina
       title="Gestión de Permisos"
       subtitle="Resumen general de la información"
-      :menu-items="menuItems"
-      @create="crearPermiso"
-      @refresh="aplicarBusqueda"
-    />
+    >
+      <template #actions>
+        <CrearPermiso
+          @guardar="mtdGuardarPermiso"
+        />
+
+        <Button icon="pi pi-refresh" @click="aplicarBusqueda" outlined />
+        <!-- Botón menú -->
+          <Button
+          icon="pi pi-ellipsis-v"
+          class="p-button-sm p-button-text"
+          @click="toggleMenu"
+          aria-haspopup="true"
+          aria-controls="menu_header"
+          />
+
+          <!-- Popup Menu -->
+          <Menu
+          id="menu_header"
+          ref="menu"
+          :model="menuItems"
+          popup
+          />
+      </template>
+    </CustomHeaderPagina>
 
     <!-- 🔎 Barra de filtros - Expandible -->
     <FiltrosPermisos
@@ -32,8 +53,8 @@
       :total-records="totalRecords"
       :first="first"
       @page="onPage"
-      @edit="editarPermiso"
-      @delete="eliminarPermiso"
+      @actualizar="mtdActualizarPermiso"
+      @delete="mtdEliminarPermiso"
     />
     
   </div>
@@ -53,6 +74,7 @@ import Tag from 'primevue/tag'
 import { now } from '@vueuse/core'
 import permisosService from '@/common/services/permisos.service'
 import { useExcelExport } from '@/common/composables/useExcelExport'
+import { useAlertStore } from '@/common/stores/alertStore'
 
 import { scopedLogger } from '@/common/utils/loggerUtils'
 const logger = scopedLogger('PermisosView.vue');
@@ -197,6 +219,58 @@ export default {
     getEstadoLabel(value) {
       const estado = this.estados.find(e => e.value === value)
       return estado ? estado.label : value
+    },
+
+    async mtdGuardarPermiso({datos, esVacio}) {
+      const customAlerta = useAlertStore();
+
+      if(esVacio) {
+        await customAlerta.alert({
+          title: 'Gestión de Permisos',
+          message: 'No se han ingresado datos para el nuevo permiso.'
+        });
+        return;
+      }
+
+      console.log('Guardando nuevo permiso:', { datos, esVacio });
+    },
+
+    async mtdActualizarPermiso({datos, esVacio, esDiferente}) {
+      const customAlerta = useAlertStore();
+
+      if(esVacio) {
+        await customAlerta.alert({
+          title: 'Gestión de Permisos',
+          message: 'No se han ingresado datos para el nuevo permiso.'
+        });
+        return;
+      } else if (!esDiferente) {
+        await customAlerta.alert({
+          title: 'Gestión de Permisos',
+          message: 'No se han detectado cambios en el formulario.'
+        });
+        return;
+      }
+
+      console.log('Guardando nuevo permiso:', { datos, esVacio, esDiferente });
+    },
+
+    async mtdEliminarPermiso(permiso) {
+      const customAlerta = useAlertStore();
+
+      const decision = await customAlerta.confirm({
+        title: 'Confirmar eliminación',
+        message: `¿Estás seguro de que deseas eliminar el permiso "${permiso.accion}"?`,
+        buttons: {
+          yes: 'Sí, eliminar',
+          cancel: 'No, cancelar',
+          visible: ["yes", "cancel"]
+        },
+      });
+
+      if(decision === 'yes') {
+        console.log('Permiso eliminado:', permiso)
+      }
     },
 
     async exportarExcel() {
