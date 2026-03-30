@@ -1,4 +1,4 @@
-# rhhub-app
+# Sistema RBAC
 
 Este repositorio contine un proyecto de Spring Boot v3 + Java v17 + MySQL + Vue 3
 
@@ -136,3 +136,7 @@ mvn spring-boot:run
 mvn clean install -pl frontend -DskipTests -q  
 mvn clean install -pl backend -DskipTests -q 
 ```
+
+# Vistas Previas
+
+![preview_01.png](/screenshots/preview_01.png)

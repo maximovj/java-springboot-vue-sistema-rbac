@@ -25,7 +25,7 @@
     <!-- Solo artifactId, NO grupo/versión (los hereda) -->
     <artifactId>backend</artifactId>
     <name>rhhub-backend</name>
-    <packaging>jar</packaging> <!-- ✅ Aquí va packaging=jar -->
+    <packaging>jar</packaging>
     
     <description>Backend Spring Boot para RHhub</description>
     
