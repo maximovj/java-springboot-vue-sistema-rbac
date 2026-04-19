@@ -27,7 +27,7 @@ const router = createRouter({
     {
       path: '/usuarios',
       name: 'usuarios',
-      component: () => import('@/views/UsuariosView.vue'),
+      component: () => import('@/views/UsuariosTablaGenericaView.vue'),
       meta: { requiresAuth: true, modulo: MODULOS.USUARIOS, permiso: PERMISOS.USUARIOS.VIEW }
     },
     {
