@@ -10,12 +10,13 @@ const initialState = () => ({
     usuario: "",
     correo: "",
     es_activado: false,
+    contrasena: "",
+    confirmar_contrasena: "",
     grupos: null,
     rol: null,
 });
 
-const usuarioForm = ref(initialState);
-
+const usuarioForm = ref(initialState());
 const lstgrupos = ref([]);
 
 const emits = defineEmits(["guardar", "cancelar"]);
@@ -25,6 +26,8 @@ const {
     usuario,
     correo,
     es_activo,
+    contrasena,
+    confirmar_contrasena,
     grupo,
     errors,
     formularioVacio,
@@ -40,8 +43,7 @@ watch(visible, async (isVisible) => {
 
     const resGrupos = await gruposService.getAll();
     lstgrupos.value = resGrupos.data?.contenido?.content;
-    logger.info("watch", lstgrupos.value);
-
+    logger.info("Grupos cargados:", lstgrupos.value);
 });
 </script>
 
@@ -50,20 +52,30 @@ watch(visible, async (isVisible) => {
 
     <CustomCuadroDialogo
         v-model="visible"
-        tituloHeader="CREAR UN NUEVO USAURIO"
+        tituloHeader="CREAR UN NUEVO USUARIO"
         :btnGuardarDisable="Object.keys(errors).length > 0 || formularioVacio"
         @guardar="guardarFormulario(emits)"
         @cancelar="cancelarFormulario(emits)"
     >
     <template #formulario>
         <Fieldset legend="Usuario" :toggleable="false">
-            <InputText autofocus id="usuario" placeholder="Escribe usuario" v-model="usuario" class="w-full" />
+            <InputText autofocus id="usuario" placeholder="Escribe usuario" v-model="usuario" fluid />
             <small v-if="errors.usuario" class="text-red-500">{{ errors.usuario }}</small>
         </Fieldset>
         
         <Fieldset legend="Correo electrónico" :toggleable="false">
-            <InputText autofocus id="correo" placeholder="Escribe correo electrónico" v-model="correo" class="w-full" />
+            <InputText id="correo" placeholder="Escribe correo electrónico" v-model="correo" fluid />
             <small v-if="errors.correo" class="text-red-500">{{ errors.correo }}</small>
+        </Fieldset>
+
+        <Fieldset legend="Contraseña" :toggleable="false">
+            <Password id="contrasena" placeholder="Escribe contraseña" v-model="contrasena" fluid toggleMask />
+            <small v-if="errors.contrasena" class="text-red-500">{{ errors.contrasena }}</small>
+        </Fieldset>
+
+        <Fieldset legend="Confirmar contraseña" :toggleable="false">
+            <Password id="confirmar_contrasena" placeholder="Confirma contraseña" v-model="confirmar_contrasena" fluid toggleMask />
+            <small v-if="errors.confirmar_contrasena" class="text-red-500">{{ errors.confirmar_contrasena }}</small>
         </Fieldset>
 
         <Fieldset legend="Grupo de usuario" :toggleable="false">
@@ -74,10 +86,10 @@ watch(visible, async (isVisible) => {
                 :options="lstgrupos"
                 optionLabel="nombre"
                 optionValue="grupo_id"
-                placeholder="Selecciona un rol"
-                class="w-full"
+                placeholder="Selecciona un grupo"
+                fluid
             />
-            <small v-if="errors.rol" class="text-red-500">{{ errors.rol }}</small>
+            <small v-if="errors.grupo" class="text-red-500">{{ errors.grupo }}</small>
         </Fieldset>
 
         <Fieldset legend="Estado de cuenta" :toggleable="false">
@@ -89,6 +101,7 @@ watch(visible, async (isVisible) => {
                 />
                 <label for="es_activo" class="ml-2 font-medium">Cuenta activada</label>
             </div>
+            <small v-if="errors.es_activo" class="text-red-500">{{ errors.es_activo }}</small>
             <small class="text-gray-400 block mt-2">
                 {{ es_activo ? 'La cuenta estará activa inmediatamente' : 'La cuenta se creará como inactiva' }}
             </small>

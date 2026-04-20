@@ -3,7 +3,7 @@
         <div class="card">
             <CustomHeaderPagina title="Gestión de Usuarios" subtitle="Lista de usuarios disponibles">
                 <template #actions>
-                    <CrearUsuario />
+                    <CrearUsuario @guardar="mtdGuardarUsuario" />
                     <Button icon="pi pi-refresh" @click="aplicarBusqueda" outlined />
                     <!-- Botón menú -->
                     <Button icon="pi pi-ellipsis-v" class="p-button-sm p-button-text" @click="toggleMenu"
@@ -174,18 +174,27 @@ export default {
             return estado ? estado.label : value
         },
 
-        async mtdGuardarPermiso({ datos, esVacio }) {
+        async mtdGuardarUsuario({ datos, esVacio }) {
             const customAlerta = useAlertStore();
 
             if (esVacio) {
                 await customAlerta.alert({
                     title: 'Gestión de Usuarios',
-                    message: 'No se han ingresado datos para el nuevo permiso.'
+                    message: 'No se han ingresado datos para el nuevo usuario.'
                 });
                 return;
             }
 
-            console.log('Guardando nuevo permiso:', { datos, esVacio });
+            // Enviar petición: guardar usuario
+            usuariosService.create(datos)
+            .then(async (response) => {
+                if(response.status == 200) {
+                    await customAlerta.alert({
+                        title: 'Gestión de Usuarios',
+                        message: 'Usuario creado correctamente',
+                    });
+                }
+            });
         },
 
         async mtdActualizarUsuario({ datos, esVacio, esDiferente }) {
