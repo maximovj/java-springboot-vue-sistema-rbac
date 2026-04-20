@@ -69,6 +69,7 @@ public class UsuarioEntity {
 
     @Column(name = "TOKEN")
     @JsonProperty("token")
+    @JsonIgnore
     private String token;
 
     // !! RELACIONES

@@ -1,5 +1,7 @@
 package com.github.maximovj.rhhub_app.controller;
 
+import com.github.maximovj.rhhub_app.dto.request.FechaCreacionRequest;
+import com.github.maximovj.rhhub_app.dto.request.UsuarioFilterRequest;
 import com.github.maximovj.rhhub_app.dto.request.UsuarioRequest;
 import com.github.maximovj.rhhub_app.dto.response.ApiResponse;
 import com.github.maximovj.rhhub_app.entity.RolEntity;
@@ -63,13 +65,18 @@ public class UsuarioController {
     public ResponseEntity<?> getBuscarUsuarios(
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "10") Integer size,
-        @ModelAttribute UsuarioRequest req
+        @ModelAttribute UsuarioFilterRequest req,
+        @ModelAttribute(name = "fecha_creacion") FechaCreacionRequest fechaCreacionReq
     ) {
+        log.info("getBuscarUsuarios recibido: {} / {}", page, size);
+        log.info("getBuscarUsuarios recibido: {}", req.toString());
+        log.info("getBuscarUsuarios recibido: {}", fechaCreacionReq.toString());
+        
         ApiResponse<UsuarioProjection> response = new ApiResponse<>();
         Specification<UsuarioEntity> spec = new UsuarioSpecBuilder()
-                                            .usuarioId(req.getUsuario_id())
                                             .usuario(req.getUsuario())
                                             .correo(req.getCorreo())
+                                            .esActivo(req.getEs_activo())
                                             .build();
         Pageable pageable = PageRequest.of(page, size, Sort.by("usuario").ascending());
         return response.okPage("Filtro de usuarios", this.usuarioService.buscarUsuarios(spec, pageable));

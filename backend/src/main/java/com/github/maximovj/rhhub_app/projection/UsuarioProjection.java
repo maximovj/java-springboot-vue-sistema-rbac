@@ -13,12 +13,16 @@ public interface UsuarioProjection {
     
     @JsonProperty("correo")
     String getCorreo();
+
+    @JsonProperty("es_activo")
+    Boolean getEsActivo();
     
     static UsuarioProjection fromEntity(UsuarioEntity e) {
         return new UsuarioProjection() {
             public Long getUsuarioId() { return e.getUsuarioId(); }
             public String getUsuario() { return e.getUsuario(); }
             public String getCorreo() { return e.getCorreo(); }
+            public Boolean getEsActivo() { return e.getEsActivo(); }
         };
     }
     
