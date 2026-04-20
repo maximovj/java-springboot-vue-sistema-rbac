@@ -1,40 +1,78 @@
 <script setup>
 import { ref, watch } from 'vue';
+import { useAlertStore } from '@/common/stores/alertStore'
 import { useUsuarioForm } from './composables/useUsuarioForm';
 import gruposService from "@/common/services/grupos.service";
+import usuariosService from '@/common/services/usuarios.service'
 
 import { scopedLogger } from "@/common/utils/loggerUtils";
 const logger = scopedLogger("CrearUsuarios.vue");
-
-const initialState = () => ({
-    usuario: "",
-    correo: "",
-    es_activado: false,
-    contrasena: "",
-    confirmar_contrasena: "",
-    grupos: null,
-    rol: null,
-});
-
-const usuarioForm = ref(initialState());
 const lstgrupos = ref([]);
 
-const emits = defineEmits(["guardar", "cancelar"]);
+const emits = defineEmits(["guardado", "cancelar"]);
 
 const {
     visible,
+    errors,
+    resetForm,
+    abrirFormulario,
+    validarFormulario,
+    formularioVacio,
+
+    // fields
     usuario,
     correo,
-    es_activo,
     contrasena,
     confirmar_contrasena,
+    es_activo,
     grupo,
-    errors,
-    formularioVacio,
-    abrirFormulario,
-    guardarFormulario,
-    cancelarFormulario,
-} = useUsuarioForm(usuarioForm);
+} = useUsuarioForm();
+
+const mtdGuardar = async () => {
+    const alertStore = useAlertStore();
+    const resultado = await validarFormulario();
+    logger.info("mtdGuardar::await", {resultado});
+
+    if (resultado?.esVacio) {
+        await alertStore.alert({
+            title: 'Gestión de Usuarios',
+            message: 'No se han ingresado datos para el nuevo usuario.'
+        });
+        return;
+    }
+
+    if(resultado?.datos) {
+        // Enviar petición: guardar usuario
+        usuariosService.create(resultado.datos)
+        .then(async (response) => {
+            if(response.status == 200) {
+                logger.info("mtdGuardar:response", {response});
+                const resData = response?.data?.contenido;
+                const dataUsuario = {...resultado.datos, usuario_id: resData.usuario_id, contrasena: null, confirmar_contrasena: null }
+                emits("guardado", dataUsuario);
+                visible.value = false;
+                await alertStore.alert({
+                    title: 'Gestión de Usuarios',
+                    message: 'Usuario creado correctamente',
+                });
+            }
+        })
+        .catch(async (err) => {
+            logger.info("mtdGuardar:catch", {err});
+            const message = err?.response?.data?.error || err?.code || err?.message || "Hubo un error en el servicio";
+            await alertStore.alert({
+                title: 'Gestión de Usuarios',
+                message,
+            });
+        });
+        
+    }
+}
+
+const mtdCancelar = () => {
+    visible.value = false;
+    resetForm();
+}
 
 watch(visible, async (isVisible) => {
     if(!isVisible) {
@@ -54,8 +92,8 @@ watch(visible, async (isVisible) => {
         v-model="visible"
         tituloHeader="CREAR UN NUEVO USUARIO"
         :btnGuardarDisable="Object.keys(errors).length > 0 || formularioVacio"
-        @guardar="guardarFormulario(emits)"
-        @cancelar="cancelarFormulario(emits)"
+        @guardar="mtdGuardar"
+        @cancelar="mtdCancelar"
     >
     <template #formulario>
         <Fieldset legend="Usuario" :toggleable="false">
@@ -96,7 +134,7 @@ watch(visible, async (isVisible) => {
             <div class="flex align-items-center justify-content-between">
                 <InputSwitch 
                     id="es_activo" 
-                    v-model="es_activo" 
+                    v-model="es_activo"
                     :binary="true"
                 />
                 <label for="es_activo" class="ml-2 font-medium">Cuenta activada</label>

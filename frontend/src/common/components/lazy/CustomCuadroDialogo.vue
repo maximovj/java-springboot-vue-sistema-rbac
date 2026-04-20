@@ -30,7 +30,7 @@
 <script setup>
 import { defineProps } from "vue";
 
-const props = defineProps({
+defineProps({
     modelValue: Boolean,
     tituloHeader: {
         type: String,
@@ -52,12 +52,12 @@ const fnGuardar = () => {
     emit("guardar");
     emit("update:btnGuardarDisable", false);
     emit("update:btnCancelarDisable", false);
-    emit("update:modelValue", false);
+    //emit("update:modelValue", false);
 };
 
 const fnCancelar = () => {
     emit("cancelar");
-    emit("update:modelValue", false);
+    //emit("update:modelValue", false);
 };
 </script>
 
