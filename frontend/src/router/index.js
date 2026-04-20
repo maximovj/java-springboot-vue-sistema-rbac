@@ -1,13 +1,11 @@
 // router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
-import { useSettingsStore } from '@/common/stores/settingsStore'
+
 import { useAuthStore } from '@/common/stores/authStore'
-import { PERMISOS } from '@/common/constants/permisos'
 import { useAlertStore } from '@/common/stores/alertStore'
 
-import { scopedLogger } from '@/common/utils/loggerUtils'
+import { PERMISOS } from '@/common/constants/permisos'
 import { MODULOS } from '@/common/constants/modulos'
-const logger = scopedLogger("router::index.js");
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,7 +25,7 @@ const router = createRouter({
     {
       path: '/usuarios',
       name: 'usuarios',
-      component: () => import('@/views/UsuariosTablaGenericaView.vue'),
+      component: () => import('@/views/UsuariosView.vue'),
       meta: { requiresAuth: true, modulo: MODULOS.USUARIOS, permiso: PERMISOS.USUARIOS.VIEW }
     },
     {

@@ -30,6 +30,7 @@ declare module 'vue' {
     EditarUsuarios: typeof import('./src/components/usuarios/EditarUsuarios.vue')['default']
     Fieldset: typeof import('primevue/fieldset')['default']
     FiltrosPermisos: typeof import('./src/components/permisos/FiltrosPermisos.vue')['default']
+    FiltrosUsuarios: typeof import('./src/components/usuarios/FiltrosUsuarios.vue')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Menu: typeof import('primevue/menu')['default']
     Password: typeof import('primevue/password')['default']

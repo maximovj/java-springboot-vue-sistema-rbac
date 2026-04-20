@@ -1,61 +1,103 @@
-<script setup>
-import { defineProps } from 'vue';
+<template>
+    <GenericDataTable
+    :value="value"
+    :filters="filters"
+    :rows="rows"
+    :loading="loading"
+    :totalRecords="totalRecords"
+    :first="first"
+    @page="$emit('page', $event)"
+    >
+    <Column field="usuario_id" header="ID" sortable style="width: 80px" />
+
+    <Column field="usuario" header="Usuario" sortable />
+    
+    <Column field="correo" header="Correo" sortable />
+
+    <Column field="es_activo" header="Estado" style="width: 120px">
+      <template #body="{ data }">
+        <Tag
+          :value="estadoLabel(data.es_activo)"
+          :severity="estadoSeverity(data.es_activo)"
+        />
+      </template>
+    </Column>
+
+    <Column field="creado_en" header="Creación" style="width: 150px">
+      <template #body="{ data }">
+        {{ formatDate(data.creado_en) }}
+      </template>
+    </Column>
+
+    <Column field="actualizado_en" header="Actualización" style="width: 150px">
+      <template #body="{ data }">
+        {{ formatDate(data.actualizado_en) }}
+      </template>
+    </Column>
+
+    <Column header="Acciones" style="width: 180px">
+      <template #body="{ data }">
+        <div class="flex gap-2">
+          <EditarUsuarios :usuario-id="data.usuario_id" />
+          
+          <Button
+            icon="pi pi-trash"
+            severity="danger"
+            rounded
+            text
+            @click="$emit('delete', data)"
+          />
+        </div>
+      </template>
+    </Column>
+    
+    </GenericDataTable>
+</template>
+
+<script>
+import Column from 'primevue/column'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
+import GenericDataTable from '@/common/components/lazy/GenericDataTable.vue';
 import EditarUsuarios from './EditarUsuarios.vue';
 
-const props = defineProps({
-    cargandoDatos: {
-        type: Boolean,
-        default: false,
+export default {
+    name: 'TablaGenericUsuarios',
+
+    components: {
+        Column,
+        Button,
+        Tag
     },
-    users: {
-        type: Array,
-        default: () => [],
+
+    props: {
+        value: { type: Array, required: true },
+        filters: Object,
+        rows: Number,
+        loading: Boolean,
+        totalRecords: Number,
+        first: Number
+    },
+
+    emits: ['page', 'actualizar', 'delete'],
+
+    methods: {
+        formatDate(date) {
+            return date ? new Date(date).toLocaleDateString() : ''
+        },
+
+        estadoLabel(value) {
+            return value ? 'Activo' : 'Inactivo'
+        },
+
+        estadoSeverity(value) {
+            return value ? 'success' : 'danger'
+        },
+
+        mtdEmitirActualizar(args) {
+            this.$emit('actualizar', args);
+        }
     }
-});
 
-const skeletonRows = Array.from({ length: 5 });
+}
 </script>
-
-<template>
-<DataTable
-  :value="cargandoDatos ? skeletonRows : users"
-  class="p-datatable-sm p-datatable-striped bg-gray-800 text-gray-200"
->
-  <Column header="ID">
-    <template #body="slotProps">
-      <CustomTableCell :loading="cargandoDatos">{{ slotProps.data.usuario_id }}</CustomTableCell>
-    </template>
-  </Column>
-
-  <Column header="Nombre">
-    <template #body="slotProps">
-      <CustomTableCell :loading="cargandoDatos">{{ slotProps.data.usuario }}</CustomTableCell>
-    </template>
-  </Column>
-
-  <Column header="Correo">
-    <template #body="slotProps">
-      <CustomTableCell :loading="cargandoDatos">{{ slotProps.data.correo }}</CustomTableCell>
-    </template>
-  </Column>
-
-  <Column header="Activo">
-    <template #body="slotProps">
-      <CustomTableCell :loading="cargandoDatos" width="2rem">
-        {{ slotProps.data.es_activo ? '🟢' : '🔴' }}
-      </CustomTableCell>
-    </template>
-  </Column>
-
-  <Column header="Acciones">
-    <template #body="slotProps">
-      <CustomTableCell :loading="cargandoDatos" width="6rem">
-        <div v-if="!cargandoDatos" class="flex gap-2">
-          <EditarUsuarios :usuarioId="slotProps.data.usuario_id" />
-          <Button icon="pi pi-trash" class="p-button-text p-button-danger" />
-        </div>
-      </CustomTableCell>
-    </template>
-  </Column>
-</DataTable>
-</template>
