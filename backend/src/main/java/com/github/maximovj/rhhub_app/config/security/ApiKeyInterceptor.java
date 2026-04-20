@@ -26,14 +26,14 @@ public class ApiKeyInterceptor implements HandlerInterceptor {
             {
                 response.setContentType("text/plain;charset=UTF-8");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Header ApiRhhubApp no encontrada");
+                response.getWriter().write("Header ApiRbacApp no encontrada");
                 return false;
             }
 
             if (!appHeaderProperties.getKeyValue().equals(apiKey)) {
                 response.setContentType("text/plain;charset=UTF-8");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Valor ApiRhhubApp no es correcto");
+                response.getWriter().write("Valor ApiRbacApp no es correcto");
                 return false;
             }
         }
